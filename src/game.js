@@ -1,198 +1,163 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import "./util"
 import { Settings } from "./settings";
 import { Board } from "./board";
+import { useGrid } from "./grid";
 
-export class Game extends React.Component {
-   constructor(props) {
-      super(props);
+export function Game() {
+   const {
+      gridSize,
+      setGridSize,
+      indexToCoords,
+      coordsToIndex,
+      getNeighbors
+   } = useGrid(9);
 
-      const size = 9;
-      const mineCount = 10;
-      const totalCells = size * size;
+   const totalCells = gridSize * gridSize
+   const initialBoardState = {
+      mines: [],
+      revealed: Array(totalCells).fill(false),
+      flagged: Array(totalCells).fill(false),
+      adjacent: [],
+   };
 
-      this.state = {
-         size,
-         mineCount,
-         mines: [],
-         revealed: Array(totalCells).fill(false),
-         flagged: Array(totalCells).fill(false),
-         adjacent: [],
-      };
+   const [board, setBoard] = useState(initialBoardState);
+   const resetBoard = () => setBoard(initialBoardState);
 
-      this.handleClick = this.handleClick.bind(this);
-      this.handleRightClick = this.handleRightClick.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
-   }
+   const [mineCount, setMineCount] = useState(10);
+   const [firstClick, setFirstClick] = useState(null);
 
-   resetBoard() {
-      const totalCells = this.state.size * this.state.size;
-
-      this.setState({
-         mines: [],
-         revealed: Array(totalCells).fill(false),
-         flagged: Array(totalCells).fill(false),
-         adjacent: []
-      });
-   }
-
-   initializeBoard(firstClickIndex) {
-      const size = this.state.size;
-      const mineCount = this.state.mineCount;
-
-      const totalCells = size * size;
-
-      const mines = Array(totalCells - 1).fill(true, 0, mineCount).fill(false, mineCount).shuffle();
-      mines.splice(firstClickIndex, 0, false);
-      const revealed = Array(totalCells).fill(false);
-      const flagged = Array(totalCells).fill(false);
-      const adjacent = this.countAdjacent(mines);
-
-      this.setState({
-         mines,
-         revealed,
-         flagged,
-         adjacent
-      }, () => this.handleClick(firstClickIndex));
-   }
-
-   countAdjacent(mines) {
-      let adjacent = [];
-
-      const size = this.state.size;
-
-      for (let [index, isMine] of mines.entries()) {
-         if (isMine) {
-            adjacent.push(null);
-            continue;
+   const generateAdjacentCounts = useCallback((mines) =>
+      [...mines.entries()].map(([index, mine]) => {
+         if (mine) {
+            return null;
          }
 
-         const [x, y] = this.indexToCoords(index, size);
-         const neighbors = this.neighbors([x, y]);
+         const center = indexToCoords(index, gridSize);
+         const neighbors = getNeighbors(center, gridSize);
 
          const adjacentCount =
-            neighbors // filter out of bound values
-               .map((coords) => this.coordsToIndex(coords, size))
+            neighbors
+               .map((coords) => coordsToIndex(coords, gridSize))
                .map((index) => mines[index])
                .filter(Boolean)
                .length
 
-         adjacent.push(adjacentCount);
-      }
+         return adjacentCount;
+      }), [gridSize, indexToCoords, coordsToIndex, getNeighbors]);
 
-      return adjacent;
-   }
+   const populateBoard = (firstClickIndex) => {
+      const mines = Array(totalCells - 1).fill(true, 0, mineCount).fill(false, mineCount).shuffle();
+      mines.splice(firstClickIndex, 0, false); // make sure first clicked cell is never a mine
+      const adjacent = generateAdjacentCounts(mines);
 
-   neighbors([x, y]) {
-      const size = this.state.size;
+      setBoard({ ...board, mines, adjacent });
+      setFirstClick(firstClickIndex);
+   };
 
-      return [
-         [x - 1, y - 1], [x, y - 1], [x + 1, y - 1],
-         [x - 1, y], [x + 1, y],
-         [x - 1, y + 1], [x, y + 1], [x + 1, y + 1],
-      ].filter(([x, y]) => x >= 0 && x < size && y >= 0 && y < size);
-   }
 
-   indexToCoords(index) {
-      return [index % this.state.size, Math.floor(index / this.state.size)];
-   }
+   const checkWinCondition = () => {
+      const { mines, revealed, flagged } = board;
 
-   coordsToIndex([x, y]) {
-      return y * this.state.size + x;
-   }
+      const emptyCells = mines.map(mine => !mine);
+      const flaggedAllMines = mines.map((mine, index) => mine && flagged[index]).equals(mines);
 
-   checkWinCondition() {
-      const mines = this.state.mines;
-      const revealed = this.state.revealed;
-      const flagged = this.state.flagged;
-
-      const revealedAllNonMines = revealed.equals(mines.map(x => !x));
-      const flaggedAllMines = flagged.map((f, idx) => f && !revealed[idx]).equals(mines);
-
-      if (revealedAllNonMines && flaggedAllMines) {
+      if (revealed.equals(emptyCells) && flaggedAllMines) {
          return true;
       }
 
       // if a mine is revealed
-      if (this.state.revealed.some((isRevealed, index) => isRevealed && this.state.mines[index])) {
+      if (revealed.some((isRevealed, index) => isRevealed && mines[index])) {
          return false;
       }
 
       return null;
-   }
+   };
 
-   handleClick(i) {
-      if (this.checkWinCondition() !== null) return;
 
-      if (this.state.mines.length === 0) {
-         this.initializeBoard(i);
+   const handleClick = (i) => {
+      if (checkWinCondition() !== null) return;
+
+      if (board.mines.length === 0) {
+         populateBoard(i);
          return;
       }
 
-      let revealed;
-      if (this.state.mines[i]) {
+      let nextRevealed;
+      if (board.mines[i]) {
          // reveal mines while keeping previously revealed cells
-         revealed = this.state.revealed.map((e, i) => e || this.state.mines[i]);
+         nextRevealed = board.revealed.map((e, i) => e || board.mines[i]);
       } else {
          // empty cell
-         revealed = this.state.revealed.slice();
+         nextRevealed = board.revealed.slice();
+         nextRevealed[i] = true;
 
-         let clickedCellCoords = this.indexToCoords(i);
+         let clickedCellCoords = indexToCoords(i, gridSize);
          let queue = [clickedCellCoords];
 
          while (queue.length > 0) {
             let centerCoords = queue.shift();
-            revealed[this.coordsToIndex(centerCoords)] = true;
+            nextRevealed[coordsToIndex(centerCoords, gridSize)] = true;
 
-            let neighbors = this.neighbors(centerCoords);
-            if (neighbors.every(n => this.state.mines[this.coordsToIndex(n)] === false)) {
-               queue.push(...neighbors.filter(n => !revealed[this.coordsToIndex(n)]));
+            let neighbors = getNeighbors(centerCoords, gridSize);
+            if (neighbors.every(n => board.mines[coordsToIndex(n, gridSize)] === false)) {
+               queue.push(...neighbors.filter(n => !nextRevealed[coordsToIndex(n, gridSize)]));
             }
          }
       }
 
-      this.setState({ revealed });
+      setBoard({ ...board, revealed: nextRevealed });
+   };
+
+   if (firstClick) {
+      handleClick(firstClick);
+      setFirstClick(null);
    }
 
-   handleRightClick(e, i) {
-      e.preventDefault();
-      if (this.checkWinCondition() !== null) return;
 
-      let flagged = this.state.flagged.slice();
-      flagged[i] = !flagged[i];
-      this.setState({ flagged });
-   }
+   const handleRightClick = (event, cellIndex) => {
+      event.preventDefault();
+      if (checkWinCondition() !== null) return;
 
-   handleSubmit(size, mineCount) {
-      this.setState({ size: size, mineCount: mineCount });
-      this.resetBoard();
-   }
+      let nextFlagged = board.flagged.slice();
+      nextFlagged[cellIndex] = !nextFlagged[cellIndex];
+      setBoard({ ...board, flagged: nextFlagged });
+   };
 
-   render() {
-      const status = this.checkWinCondition();
-      const { size, mines, flagged, revealed, adjacent } = this.state;
+   const handleSubmit = (newGridSize, newMineCount) => {
+      setGridSize(newGridSize);
+      setMineCount(newMineCount);
+      resetBoard();
+   };
 
 
-      return (
-         <div>
-            <Settings onSubmit={this.handleSubmit} />
-            <h1>Status: {status ? "Won" : (status === null ? "Playing" : "Lost")}</h1>
+   const status = checkWinCondition();
 
-            <Board
-               size={size}
-               mines={mines}
-               flagged={flagged}
-               revealed={revealed}
-               adjacent={adjacent}
-               onClick={this.handleClick}
-               onRightClick={this.handleRightClick}
-            />
+   return (
+      <div>
+         <Settings gridSize={gridSize} mineCount={mineCount} onSubmit={handleSubmit} />
+         <h1>Status: {
+            status
+               ? "Won"
+               : (status === false)
+                  ? "Lost"
+                  : "Playing"
+         }
+         </h1>
 
-            <button onClick={() => this.resetBoard()}>
-               Restart
-        </button>
+         <Board
+            size={gridSize}
+            mines={board.mines}
+            flagged={board.flagged}
+            revealed={board.revealed}
+            adjacent={board.adjacent}
+            onClick={handleClick}
+            onRightClick={handleRightClick}
+         />
 
-         </div>
-      );
-   }
+         <button onClick={resetBoard}>
+            Restart
+         </button>
+      </div>
+   );
 }

@@ -1,39 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 
-export class Settings extends React.Component {
-   constructor(props) {
-      super(props);
+export function Settings(props) {
+   const [gridSize, setGridSize] = useState(props.gridSize);
+   const [mineCount, setMineCount] = useState(props.mineCount);
 
-      this.state = {
-         size: '8',
-         mineCount: '10',
-      };
+   const handleGridSizeChange = (event) => {
+      setGridSize(+event.target.value);
+   };
 
-      this.handleChange = this.handleChange.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
+   const handleMineCountChange = (event) => {
+      setMineCount(+event.target.value);
    }
 
-   handleChange(e) {
-      this.setState({ [e.target.name]: e.target.value });
+   const handleSubmit = (event) => {
+      event.preventDefault();
+      props.onSubmit(gridSize, mineCount);
    }
 
-   handleSubmit(e) {
-      e.preventDefault();
-
-      this.props.onSubmit(+this.state.size || 5, +this.state.mineCount || 10);
-   }
-
-   render() {
-      return <form onSubmit={this.handleSubmit}>
+   return (
+      <form onSubmit={handleSubmit}>
          <label>
-            Field size:
-            <input name="size" type="text" value={this.state.size} onChange={this.handleChange} />
+            Grid size:
+            <input name="gridSize" type="text" value={gridSize} onChange={handleGridSizeChange} />
          </label>
          <label>
             Mine count:
-            <input name="mineCount" type="text" value={this.state.mineCount} onChange={this.handleChange} />
+            <input name="mineCount" type="text" value={mineCount} onChange={handleMineCountChange} />
          </label>
          <button type="submit">Apply</button>
       </form>
-   }
+   );
 }
