@@ -7,6 +7,7 @@ function renderCell({ mines, flagged, revealed, adjacent, onClick, onRightClick 
          <CellRevealed
             key={cellId}
             isMine={mines[cellId]}
+            onClick={() => onClick(cellId)}
             adjacentCount={adjacent[cellId]}
          />
       );

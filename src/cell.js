@@ -27,10 +27,11 @@ export function CellHidden({ isFlagged, onClick, onRightClick }) {
    );
 }
 
-export function CellRevealed({ isMine, adjacentCount }) {
+export function CellRevealed({ isMine, adjacentCount, onClick }) {
    return (
       <Cell
          isRevealed={true}
+         onClick={onClick}
          onRightClick={(e) => e.preventDefault()}
       >
          {isMine && "💣"}

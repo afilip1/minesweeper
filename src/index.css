@@ -8,10 +8,6 @@ input {
    margin-right: 30px;
 }
 
-.game {
-   display: flex;
-}
-
 .board-row {
    display: flex;
 }

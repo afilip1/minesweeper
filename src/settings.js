@@ -14,7 +14,7 @@ export function Settings(props) {
 
    const handleSubmit = (event) => {
       event.preventDefault();
-      props.onSubmit(gridSize, mineCount);
+      props.onSettingsUpdate(gridSize, mineCount);
    }
 
    return (
