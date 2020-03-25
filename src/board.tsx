@@ -39,7 +39,7 @@ export function Board({ size, ...props }: BoardProps) {
    let cellIds = range(0, size * size);
    let rowIds = range(0, size);
 
-   let board = rowIds.map(rowId =>
+   let rows = rowIds.map(rowId =>
       <div className="board-row" key={rowId}>
          {
             cellIds
@@ -49,5 +49,5 @@ export function Board({ size, ...props }: BoardProps) {
       </div>
    );
 
-   return <div>{board}</div>;
+   return <div className="board">{rows}</div>;
 }

@@ -4,6 +4,8 @@ declare global {
       equals(other: T[]): boolean
       shuffle(): T[]
       zip<U>(other: U[]): [T, U][]
+      withIndex(): [number, T][]
+      countBy(predicate: (value: T) => boolean): number
    }
 }
 
@@ -22,6 +24,14 @@ Array.prototype.shuffle = function <T>(this: T[]) {
 
 Array.prototype.zip = function <T, U>(this: T[], other: U[]) {
    return this.map((e, i) => [e, other[i]]);
+}
+
+Array.prototype.withIndex = function <T>(this: T[]) {
+   return Array.from(this.entries());
+}
+
+Array.prototype.countBy = function <T>(this: T[], predicate: (item: T) => boolean) {
+   return this.filter(predicate).length;
 }
 
 const range = function (start: number, end: number) {

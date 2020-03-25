@@ -9,20 +9,12 @@ enum GameState {
    Won,
    Lost,
 }
-
-function GameStatus({ gameState }: { gameState: GameState }) {
-   let possibleStatuses = ["Playing", "You won", "You lost"];
-
-   return <h1>Status: {possibleStatuses[gameState]}</h1>
-}
-
 type BoardState = {
    mines: boolean[],
    revealed: boolean[],
    flagged: boolean[],
    adjacent: (number | null)[]
 };
-
 export function Minesweeper() {
    const {
       gridSize,
@@ -41,41 +33,31 @@ export function Minesweeper() {
    const resetBoard = () => setBoard(initialBoardState);
 
    const [mineCount, setMineCount] = useState(10);
-   const [firstClick, setFirstClick] = useState<number | null>(null);
 
-   const generateAdjacentCounts = useCallback((mines) =>
-      [...mines.entries()].map(([index, mine]) => {
-         if (mine) {
-            return null;
-         }
+   const generateAdjacentCounts = useCallback((mines: boolean[]) =>
+      mines.withIndex().map(([cell, mine]) =>
+         mine
+            ? null
+            : getNeighbors(cell).countBy((n) => mines[n])
+      ), [getNeighbors]);
 
-         const neighbors = getNeighbors(index);
+   const populateBoard = (firstClickedCell: number) => {
+      const mines = Array(totalCells - 1)
+         .fill(true, 0, mineCount)
+         .fill(false, mineCount)
+         .shuffle();
+      mines.splice(firstClickedCell, 0, false); // make sure first clicked cell is never a mine
 
-         const adjacentCount =
-            neighbors
-               .map((index) => mines[index])
-               .filter(Boolean)
-               .length
-
-         return adjacentCount;
-      }), [getNeighbors]);
-
-   const populateBoard = (firstClickIndex: number) => {
-      const mines = Array(totalCells - 1).fill(true, 0, mineCount).fill(false, mineCount).shuffle();
-      mines.splice(firstClickIndex, 0, false); // make sure first clicked cell is never a mine
       const adjacent = generateAdjacentCounts(mines);
 
-      setBoard({ ...board, mines, adjacent });
+      return { ...board, mines, adjacent };
    };
 
    const getGameState = () => {
       const { mines, revealed, flagged } = board;
 
       const emptyCells = mines.map(isMine => !isMine);
-      const flaggedAllMines = mines
-         .zip(flagged)
-         .map(([isMine, isFlagged]) => isMine && isFlagged)
-         .equals(mines); // workaround for revealed cells that remain flagged
+      const flaggedAllMines = mines.equals(flagged);
 
       if (revealed.equals(emptyCells) && flaggedAllMines) {
          return GameState.Won;
@@ -89,76 +71,69 @@ export function Minesweeper() {
       return GameState.InProgress;
    };
 
-   const revealMines = () => {
+   const revealAllMines = (board: BoardState) => {
       const revealed = board.revealed
          .zip(board.mines)
          .map(([isRevealed, isMine]) => isRevealed || isMine);
 
-      setBoard({ ...board, revealed });
+      return { ...board, revealed };
    }
 
-   const revealUnflaggedNeighbors = (i: number) => {
-      const neighbors = getNeighbors(i);
-
-      if (neighbors.filter(n => board.flagged[n]).length !== board.adjacent[i])
-         return;
-
-      let nextRevealed = board.revealed.slice();
-
-      let queue = neighbors.filter(n => !(board.revealed[n] || board.flagged[n]));
+   const revealCascade = (board: BoardState, ...queue: number[]) => {
+      let { revealed } = board;
 
       while (queue.length > 0) {
-         let centerIndex = queue.shift() as number;
-         nextRevealed[centerIndex] = true;
+         const center = queue.shift() as number;
+         revealed[center] = true;
 
-         let neighbors = getNeighbors(centerIndex);
-         if (board.adjacent[centerIndex] === 0) {
-            queue.push(...neighbors.filter(n => !nextRevealed[n]));
+         const neighbors = getNeighbors(center);
+
+         if (board.adjacent[center] === 0) {
+            const unrevealed = neighbors.filter(n => !revealed[n]);
+            queue.push(...unrevealed);
          }
       }
-      setBoard({ ...board, revealed: nextRevealed });
+
+      return { ...board, revealed };
    }
 
-   const revealCell = (i: number) => {
-      // empty cell
-      let nextRevealed = board.revealed.slice();
+   const revealUnflaggedNeighbors = (board: BoardState, cell: number) => {
+      const neighbors = getNeighbors(cell);
+      const unflaggedNeighbors = neighbors.filter(n => !(board.revealed[n] || board.flagged[n]));
 
-      let queue = [i];
-      while (queue.length > 0) {
-         let centerIndex = queue.shift() as number;
-         nextRevealed[centerIndex] = true;
-
-         let neighbors = getNeighbors(centerIndex);
-         if (board.adjacent[centerIndex] === 0) {
-            queue.push(...neighbors.filter(n => !nextRevealed[n]));
-         }
-      }
-      setBoard({ ...board, revealed: nextRevealed });
+      return revealCascade(board, ...unflaggedNeighbors);
    }
 
-   const handleClick = (i: number) => {
+   const revealCell = (board: BoardState, cell: number) => {
+      let nextBoard = revealCascade(board, cell);
+      nextBoard.flagged[cell] = false;
+      return nextBoard;
+   }
+
+   const handleClick = (clickedCell: number) => {
+      // FIXME: performance issue on large boards with few mines
       if (getGameState() !== GameState.InProgress) return;
 
-      if (board.mines.length === 0) {
-         populateBoard(i);
-         setFirstClick(i);
-         return;
-      }
+      const currentBoard = board.mines.length === 0
+         ? populateBoard(clickedCell)
+         : board;
 
-      if (board.mines[i]) {
-         revealMines();
-      }
-      else if (board.revealed[i]) {
-         revealUnflaggedNeighbors(i);
+      let nextBoard: BoardState;
+      if (currentBoard.mines[clickedCell]) {
+         nextBoard = revealAllMines(currentBoard);
+      } else if (currentBoard.revealed[clickedCell]) {
+         const neighbors = getNeighbors(clickedCell);
+
+         const adjacentFlags = neighbors.filter(n => currentBoard.flagged[n])
+         if (adjacentFlags.length !== currentBoard.adjacent[clickedCell]) return;
+
+         nextBoard = revealUnflaggedNeighbors(currentBoard, clickedCell);
       } else {
-         revealCell(i);
+         nextBoard = revealCell(currentBoard, clickedCell);
       }
-   };
 
-   if (firstClick) {
-      handleClick(firstClick);
-      setFirstClick(null);
-   }
+      setBoard(nextBoard);
+   };
 
    const handleRightClick = (event: SyntheticEvent, cellIndex: number) => {
       event.preventDefault();
@@ -175,10 +150,30 @@ export function Minesweeper() {
       resetBoard();
    };
 
+   const state = getGameState();
+   let status;
+   switch (state) {
+      case GameState.InProgress:
+         status = "Mines remaining: " + (mineCount - board.flagged.filter(Boolean).length);
+         break;
+      case GameState.Won:
+         status = "You win!"
+         break;
+      case GameState.Lost:
+         status = "You lose :("
+         break;
+   }
+
    return (
-      <div>
-         <Settings gridSize={gridSize} mineCount={mineCount} onSettingsUpdate={handleSettingsUpdate} />
-         <GameStatus gameState={getGameState()} />
+      <div className="minesweeper" onContextMenu={(e) => e.preventDefault()}>
+         <Settings
+            gridSize={gridSize}
+            mineCount={mineCount}
+            onSettingsUpdate={handleSettingsUpdate}
+         />
+
+
+         <h1>{status}</h1>
 
          <Board
             size={gridSize}
