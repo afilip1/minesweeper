@@ -1,10 +1,34 @@
 import React, { useState, FormEvent } from "react";
+import { GameState } from "./minesweeper"
+
+type GameStatusProps = {
+   gameState: GameState,
+   minesLeft: number,
+}
+
+function GameStatus({ gameState, minesLeft }: GameStatusProps) {
+   let status;
+   switch (gameState) {
+      case GameState.InProgress:
+         status = "Mines remaining: " + minesLeft;
+         break;
+      case GameState.Won:
+         status = "You win!"
+         break;
+      case GameState.Lost:
+         status = "You lose :("
+         break;
+   }
+
+   return <h1>{status}</h1>
+}
 
 type SettingsProps = {
    gridSize: number,
    mineCount: number,
    onSettingsUpdate: (gridSize: number, mineCount: number) => void
-};
+   onRestart: () => void
+} & GameStatusProps;
 
 export function Settings(props: SettingsProps) {
    const [gridSize, setGridSize] = useState(props.gridSize);
@@ -24,16 +48,22 @@ export function Settings(props: SettingsProps) {
    }
 
    return (
-      <form onSubmit={handleSubmit}>
-         <label>
-            Grid size:
+      <div>
+         <form onSubmit={handleSubmit}>
+            <label>
+               Grid size:
             <input name="gridSize" type="text" value={gridSize} onChange={handleGridSizeChange} />
-         </label>
-         <label>
-            Mine count:
+            </label>
+            <label>
+               Mine count:
             <input name="mineCount" type="text" value={mineCount} onChange={handleMineCountChange} />
-         </label>
-         <button type="submit">Apply</button>
-      </form>
+            </label>
+            <button type="submit">Apply</button>
+         </form>
+
+         <button onClick={props.onRestart}>Restart</button>
+
+         <GameStatus gameState={props.gameState} minesLeft={props.minesLeft} />
+      </div>
    );
 }

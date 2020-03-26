@@ -4,17 +4,19 @@ import { Settings } from "./settings";
 import { Board } from "./board";
 import { useGrid } from "./grid";
 
-enum GameState {
+export enum GameState {
    InProgress,
    Won,
    Lost,
 }
+
 type BoardState = {
    mines: boolean[],
    revealed: boolean[],
    flagged: boolean[],
    adjacent: (number | null)[]
 };
+
 export function Minesweeper() {
    const {
       gridSize,
@@ -32,7 +34,7 @@ export function Minesweeper() {
    const [board, setBoard] = useState(getInitialBoardState(gridSize));
    const resetBoard = (size: number) => setBoard(getInitialBoardState(size));
 
-   const [mineCount, setMineCount] = useState(30);
+   const [mineCount, setMineCount] = useState(50);
 
    const generateAdjacentCounts = useCallback((mines: boolean[]) =>
       mines.withIndex().map(([cell, mine]) =>
@@ -117,6 +119,8 @@ export function Minesweeper() {
          ? populateBoard(clickedCell)
          : board;
 
+      if (currentBoard.flagged[clickedCell]) return;
+
       let nextBoard: BoardState;
       if (currentBoard.mines[clickedCell]) {
          nextBoard = revealAllMines(currentBoard);
@@ -149,30 +153,16 @@ export function Minesweeper() {
       resetBoard(newGridSize);
    };
 
-   const state = getGameState();
-   let status;
-   switch (state) {
-      case GameState.InProgress:
-         status = "Mines remaining: " + (mineCount - board.flagged.filter(Boolean).length);
-         break;
-      case GameState.Won:
-         status = "You win!"
-         break;
-      case GameState.Lost:
-         status = "You lose :("
-         break;
-   }
-
    return (
       <div className="minesweeper" onContextMenu={(e) => e.preventDefault()}>
          <Settings
             gridSize={gridSize}
             mineCount={mineCount}
+            gameState={getGameState()}
+            minesLeft={mineCount - board.flagged.countBy(Boolean)}
             onSettingsUpdate={handleSettingsUpdate}
+            onRestart={() => resetBoard(gridSize)}
          />
-
-
-         <h1>{status}</h1>
 
          <Board
             size={gridSize}
@@ -183,8 +173,6 @@ export function Minesweeper() {
             onClick={handleClick}
             onRightClick={handleRightClick}
          />
-
-         <button onClick={() => resetBoard(gridSize)}>Restart</button>
       </div>
    );
 }
