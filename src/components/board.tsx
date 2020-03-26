@@ -1,17 +1,20 @@
 import React, { SyntheticEvent } from "react";
-import { CellHidden, CellRevealed } from "./cell";
-import { range } from "./util";
+import { CellHidden, CellRevealed } from "src/components/cell";
+import { range } from "src/util";
+import { BoardState } from "src/hooks/game";
 
 type RenderCellProps = {
-   mines: boolean[],
-   flagged: boolean[],
-   revealed: boolean[],
-   adjacent: (number | null)[],
+   board: BoardState,
    onClick: (i: number) => void,
    onRightClick: (e: SyntheticEvent, i: number) => void,
 };
 
-function renderCell({ mines, flagged, revealed, adjacent, onClick, onRightClick }: RenderCellProps, cellId: number) {
+function renderCell(props: RenderCellProps, cellId: number) {
+   const {
+      board: { mines, flagged, revealed, adjacent },
+      onClick, onRightClick
+   } = props;
+
    if (revealed[cellId]) {
       return (
          <CellRevealed

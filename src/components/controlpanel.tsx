@@ -1,5 +1,5 @@
 import React, { useState, FormEvent } from "react";
-import { GameState } from "./minesweeper"
+import { GameState } from "src/hooks/game"
 
 type GameStatusProps = {
    gameState: GameState,
@@ -30,7 +30,7 @@ type SettingsProps = {
    onRestart: () => void
 } & GameStatusProps;
 
-export function Settings(props: SettingsProps) {
+export function ControlPanel(props: SettingsProps) {
    const [gridSize, setGridSize] = useState(props.gridSize);
    const [mineCount, setMineCount] = useState(props.mineCount);
 

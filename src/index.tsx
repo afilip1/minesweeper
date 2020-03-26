@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "src/index.css";
 
-import { Minesweeper } from "./minesweeper";
+import { Game } from "src/components/game";
 
 ReactDOM.render(
-   <Minesweeper />,
+   <Game />,
    document.getElementById("root")
 )
