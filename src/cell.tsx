@@ -47,6 +47,8 @@ type CellRevealedProps = {
 };
 
 function CellRevealed({ isMine, adjacentCount, onClick }: CellRevealedProps) {
+   const countColors = [undefined, "blue", "green", "red", "purple", "maroon", "turquoise", "black", "gray"];
+
    return (
       <Cell
          isRevealed={true}
@@ -54,7 +56,9 @@ function CellRevealed({ isMine, adjacentCount, onClick }: CellRevealedProps) {
          onRightClick={(e) => e.preventDefault()}
       >
          {isMine && "💣"}
-         {adjacentCount !== null && adjacentCount > 0 && adjacentCount}
+         {adjacentCount !== null && adjacentCount > 0 &&
+            <span style={{ color: countColors[adjacentCount] }}>{adjacentCount}</span>
+         }
       </Cell>
    );
 };
