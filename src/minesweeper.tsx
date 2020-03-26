@@ -20,19 +20,19 @@ export function Minesweeper() {
       gridSize,
       setGridSize,
       getNeighbors
-   } = useGrid(9);
+   } = useGrid(20);
 
-   const totalCells = gridSize * gridSize
-   const initialBoardState: BoardState = {
+   const getInitialBoardState = (size: number) => ({
       mines: [],
-      revealed: Array(totalCells).fill(false),
-      flagged: Array(totalCells).fill(false),
+      revealed: Array(size * size).fill(false),
+      flagged: Array(size * size).fill(false),
       adjacent: [],
-   };
-   const [board, setBoard] = useState(initialBoardState);
-   const resetBoard = () => setBoard(initialBoardState);
+   }) as BoardState;
 
-   const [mineCount, setMineCount] = useState(10);
+   const [board, setBoard] = useState(getInitialBoardState(gridSize));
+   const resetBoard = (size: number) => setBoard(getInitialBoardState(size));
+
+   const [mineCount, setMineCount] = useState(30);
 
    const generateAdjacentCounts = useCallback((mines: boolean[]) =>
       mines.withIndex().map(([cell, mine]) =>
@@ -42,7 +42,7 @@ export function Minesweeper() {
       ), [getNeighbors]);
 
    const populateBoard = (firstClickedCell: number) => {
-      const mines = Array(totalCells - 1)
+      const mines = Array((gridSize * gridSize) - 1)
          .fill(true, 0, mineCount)
          .fill(false, mineCount)
          .shuffle();
@@ -82,14 +82,14 @@ export function Minesweeper() {
    const revealCascade = (board: BoardState, ...queue: number[]) => {
       let { revealed } = board;
 
+      queue.forEach(cell => revealed[cell] = true);
+
       while (queue.length > 0) {
          const center = queue.shift() as number;
-         revealed[center] = true;
-
-         const neighbors = getNeighbors(center);
 
          if (board.adjacent[center] === 0) {
-            const unrevealed = neighbors.filter(n => !revealed[n]);
+            const unrevealed = getNeighbors(center).filter(n => !revealed[n]);
+            unrevealed.forEach(u => revealed[u] = true);
             queue.push(...unrevealed);
          }
       }
@@ -111,7 +111,6 @@ export function Minesweeper() {
    }
 
    const handleClick = (clickedCell: number) => {
-      // FIXME: performance issue on large boards with few mines
       if (getGameState() !== GameState.InProgress) return;
 
       const currentBoard = board.mines.length === 0
@@ -147,7 +146,7 @@ export function Minesweeper() {
    const handleSettingsUpdate = (newGridSize: number, newMineCount: number) => {
       setGridSize(newGridSize);
       setMineCount(newMineCount);
-      resetBoard();
+      resetBoard(newGridSize);
    };
 
    const state = getGameState();
@@ -185,7 +184,7 @@ export function Minesweeper() {
             onRightClick={handleRightClick}
          />
 
-         <button onClick={resetBoard}>Restart</button>
+         <button onClick={() => resetBoard(gridSize)}>Restart</button>
       </div>
    );
 }
