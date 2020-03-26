@@ -1,11 +1,12 @@
-import { useState, SyntheticEvent, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useGrid } from "src/hooks/grid"
 
 export type BoardState = {
    mines: boolean[],
    revealed: boolean[],
    flagged: boolean[],
-   adjacent: (number | null)[]
+   adjacent: (number | null)[],
+   dimmed: boolean[],
 };
 
 export enum GameState {
@@ -30,6 +31,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
    const [adjacent, setAdjacent] = useState<(number | null)[]>([]);
    const [revealed, setRevealed] = useState(Array(gridSize * gridSize).fill(false));
    const [flagged, setFlagged] = useState(Array(gridSize * gridSize).fill(false));
+   const [dimmed, setDimmed] = useState(Array(gridSize * gridSize).fill(false));
 
    const resetBoard = (size: number, mineCount: number) => {
       setGridSize(size);
@@ -39,6 +41,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       setAdjacent([]);
       setRevealed(Array(size * size).fill(false));
       setFlagged(Array(size * size).fill(false));
+      setDimmed(Array(size * size).fill(false));
    }
 
    const populateBoard = useCallback((firstClickedCell: number) => {
@@ -75,7 +78,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       return GameState.InProgress;
    }, [mines, flagged, revealed]);
 
-   const handleCellClick = useCallback((cell: number) => {
+   const handleCellLeftClick = useCallback((cell: number) => {
       if (getGameState() !== GameState.InProgress) return;
 
       if (mines.length === 0) {
@@ -84,12 +87,19 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
          return;
       }
 
-      const revealAllMines = () => {
+      const revealAllMines = (cell: number) => {
          const nextRevealed = revealed
             .zip(mines)
             .map(([isRevealed, isMine]) => isRevealed || isMine);
 
          setRevealed(nextRevealed);
+
+         const highlighted = getNeighbors(cell).concat(cell);
+
+         let nextDimmed = Array(gridSize * gridSize).fill(true);
+         highlighted.forEach(h => nextDimmed[h] = false);
+
+         setDimmed(nextDimmed);
       }
 
       const revealCascade = (...queue: number[]) => {
@@ -98,6 +108,17 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
 
          while (queue.length > 0) {
             const center = queue.shift() as number;
+
+            if (mines[center]) {
+               nextRevealed[center] = true;
+
+               const highlighted = getNeighbors(center).concat(center);
+
+               let nextDimmed = Array(gridSize * gridSize).fill(true);
+               highlighted.forEach(h => nextDimmed[h] = false);
+
+               setDimmed(nextDimmed);
+            }
 
             if (adjacent[center] === 0) {
                const unrevealed = getNeighbors(center).filter(n => !nextRevealed[n]);
@@ -133,7 +154,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       if (flagged[cell]) return;
 
       if (mines[cell]) {
-         revealAllMines();
+         revealAllMines(cell);
       } else if (revealed[cell]) {
          revealUnflaggedNeighbors(cell);
       } else {
@@ -142,7 +163,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
    }, [mines, revealed, flagged, adjacent, getGameState, getNeighbors, populateBoard]);
 
    if (firstClick) {
-      handleCellClick(firstClick);
+      handleCellLeftClick(firstClick);
       setFirstClick(null);
    }
 
@@ -152,21 +173,36 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       setFlagged(nextFlagged);
    }
 
-   const handleCellRightClick = (event: SyntheticEvent, cell: number) => {
+   const handleCellRightClick = (event: React.MouseEvent, cell: number) => {
       event.preventDefault();
       if (getGameState() !== GameState.InProgress) return;
 
       flagCell(cell);
    };
 
+   const handleCellMiddleOver = (cell: number) => {
+      const highlighted = getNeighbors(cell).concat(cell);
+
+      let nextDimmed = Array(gridSize * gridSize).fill(true);
+      highlighted.forEach(h => nextDimmed[h] = false);
+
+      setDimmed(nextDimmed);
+   }
+
+   const handleMiddleUp = () => {
+      setDimmed(Array(gridSize * gridSize).fill(false));
+   }
+
    return {
       gridSize,
       mineCount,
       setMineCount,
-      board: { mines, revealed, flagged, adjacent },
+      board: { mines, revealed, flagged, adjacent, dimmed },
       resetBoard,
-      handleCellClick,
+      handleCellLeftClick,
       handleCellRightClick,
+      handleCellMiddleOver,
+      handleMiddleUp,
       flagCell,
       getGameState,
    };

@@ -1,18 +1,19 @@
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import { CellHidden, CellRevealed } from "src/components/cell";
 import { range } from "src/util";
 import { BoardState } from "src/hooks/game";
 
 type RenderCellProps = {
-   board: BoardState,
-   onClick: (i: number) => void,
-   onRightClick: (e: SyntheticEvent, i: number) => void,
-};
+   board: BoardState
+   onLeftClick: (i: number) => void
+   onRightClick: (e: React.MouseEvent, i: number) => void
+   onMiddleOver: (e: React.MouseEvent, i: number) => void
+}
 
 function renderCell(props: RenderCellProps, cellId: number) {
    const {
-      board: { mines, flagged, revealed, adjacent },
-      onClick, onRightClick
+      board: { mines, flagged, revealed, adjacent, dimmed },
+      onLeftClick, onRightClick, onMiddleOver
    } = props;
 
    if (revealed[cellId]) {
@@ -20,7 +21,9 @@ function renderCell(props: RenderCellProps, cellId: number) {
          <CellRevealed
             key={cellId}
             isMine={mines[cellId]}
-            onClick={() => onClick(cellId)}
+            isDimmed={dimmed[cellId]}
+            onLeftClick={() => onLeftClick(cellId)}
+            onMiddleOver={(e) => onMiddleOver(e, cellId)}
             adjacentCount={adjacent[cellId]}
          />
       );
@@ -28,8 +31,9 @@ function renderCell(props: RenderCellProps, cellId: number) {
       return (
          <CellHidden
             key={cellId}
+            isDimmed={dimmed[cellId]}
             isFlagged={flagged[cellId]}
-            onClick={() => onClick(cellId)}
+            onLeftClick={() => onLeftClick(cellId)}
             onRightClick={(e) => onRightClick(e, cellId)}
          />
       );

@@ -82,8 +82,9 @@ export function ControlPanel(props: ControlPanelProps) {
                <h2>Controls</h2>
                <p><strong>Left click</strong> on an unrevealed cell to reveal it.</p>
                <p><strong>Right click</strong> on an unrevealed cell to flag it as a mine.</p>
+               <p><strong>Hold middle mouse button</strong> over an revealed cell to highlight its neighbors.</p>
 
-               <p><strong>Tip #1:</strong> If you've placed enough flags near a revealed cell, you can click on it to automatically reveal cells without flags.</p>
+               <p><strong>Tip #1:</strong> If you've placed enough flags near a revealed cell, you can left click on it to automatically reveal cells without flags.</p>
                <p><strong>Tip #2:</strong> The first cell you click will never be a mine, so don't worry about where to click.</p>
             </div>
          </div>

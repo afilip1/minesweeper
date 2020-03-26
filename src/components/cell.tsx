@@ -1,21 +1,26 @@
-import React, { ReactEventHandler, ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 type CellProps = {
    isRevealed: boolean,
-   onClick: ReactEventHandler
-   onRightClick: ReactEventHandler
+   isDimmed: boolean,
+   onLeftClick: () => void
+   onRightClick: (e: React.MouseEvent) => void
+   onMiddleOver: (e: React.MouseEvent) => void
    children: ReactNode
 };
 
-function Cell({ isRevealed, onClick, onRightClick, children }: CellProps) {
-   let className = "cell";
+function Cell({ isRevealed, isDimmed, onLeftClick, onRightClick, onMiddleOver, children }: CellProps) {
+   let className = "cell cell-active";
    if (isRevealed) className += " cell-revealed";
+   if (isDimmed) className += " cell-dimmed";
 
    return (
       <button
          className={className}
-         onClick={onClick}
+         onClick={onLeftClick}
          onContextMenu={onRightClick}
+         onMouseEnter={onMiddleOver}
+         onMouseDown={onMiddleOver}
       >
          {children}
       </button>
@@ -24,16 +29,19 @@ function Cell({ isRevealed, onClick, onRightClick, children }: CellProps) {
 
 type CellHiddenProps = {
    isFlagged: boolean,
-   onClick: ReactEventHandler,
-   onRightClick: ReactEventHandler,
+   isDimmed: boolean,
+   onLeftClick: () => void,
+   onRightClick: (e: React.MouseEvent) => void,
 };
 
-function CellHidden({ isFlagged, onClick, onRightClick }: CellHiddenProps) {
+function CellHidden({ isFlagged, isDimmed, onLeftClick, onRightClick }: CellHiddenProps) {
    return (
       <Cell
          isRevealed={false}
-         onClick={onClick}
+         isDimmed={isDimmed}
+         onLeftClick={onLeftClick}
          onRightClick={onRightClick}
+         onMiddleOver={() => { }}
       >
          {isFlagged && "🚩"}
       </Cell>
@@ -42,18 +50,22 @@ function CellHidden({ isFlagged, onClick, onRightClick }: CellHiddenProps) {
 
 type CellRevealedProps = {
    isMine: boolean,
+   isDimmed: boolean,
    adjacentCount: number | null,
-   onClick: ReactEventHandler,
+   onLeftClick: () => void,
+   onMiddleOver: (e: React.MouseEvent) => void,
 };
 
-function CellRevealed({ isMine, adjacentCount, onClick }: CellRevealedProps) {
+function CellRevealed({ isMine, isDimmed, adjacentCount, onLeftClick, onMiddleOver }: CellRevealedProps) {
    const countColors = [undefined, "blue", "green", "red", "purple", "maroon", "turquoise", "black", "gray"];
 
    return (
       <Cell
          isRevealed={true}
-         onClick={onClick}
+         isDimmed={isDimmed}
+         onLeftClick={onLeftClick}
          onRightClick={(e) => e.preventDefault()}
+         onMiddleOver={onMiddleOver}
       >
          {isMine && "💣"}
          {adjacentCount !== null && adjacentCount > 0 &&

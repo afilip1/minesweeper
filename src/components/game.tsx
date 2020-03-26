@@ -4,7 +4,6 @@ import "src/util"
 import { ControlPanel } from "src/components/controlpanel";
 import { Board } from "src/components/board";
 import { useGame } from "src/hooks/game"
-import { resolveSoa } from "dns";
 
 export function Game() {
    const [cookies, setCookie] = useCookies(["minekong"]);
@@ -17,9 +16,11 @@ export function Game() {
       mineCount,
       board,
       resetBoard,
-      handleCellClick,
+      handleCellLeftClick,
       handleCellRightClick,
-      getGameState
+      handleCellMiddleOver,
+      handleMiddleUp,
+      getGameState,
    } = useGame({ initSize, initMineCount });
 
    const handleSettingsUpdate = (newGridSize: number, newMineCount: number) => {
@@ -28,8 +29,20 @@ export function Game() {
       resetBoard(newGridSize, newMineCount);
    }
 
+   const handleMouseUp = (e: React.MouseEvent) => {
+      if (e.button === 1) {
+         handleMiddleUp();
+      }
+   }
+
+   const handleMiddleOver = (e: React.MouseEvent, i: number) => {
+      if (e.buttons === 4) {
+         handleCellMiddleOver(i);
+      }
+   }
+
    return (
-      <div className="game" onContextMenu={(e) => e.preventDefault()}>
+      <div className="game" onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp}>
          <ControlPanel
             gridSize={gridSize}
             mineCount={mineCount}
@@ -41,8 +54,9 @@ export function Game() {
          <Board
             size={gridSize}
             board={board}
-            onClick={handleCellClick}
+            onLeftClick={handleCellLeftClick}
             onRightClick={handleCellRightClick}
+            onMiddleOver={handleMiddleOver}
          />
       </div>
    );
