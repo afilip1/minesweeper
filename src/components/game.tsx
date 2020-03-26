@@ -1,10 +1,17 @@
 import React from "react";
+import { useCookies } from "react-cookie";
 import "src/util"
 import { ControlPanel } from "src/components/controlpanel";
 import { Board } from "src/components/board";
 import { useGame } from "src/hooks/game"
+import { resolveSoa } from "dns";
 
 export function Game() {
+   const [cookies, setCookie] = useCookies(["minekong"]);
+
+   const initSize = cookies.size ?? 9;
+   const initMineCount = cookies.mineCount ?? 10;
+
    const {
       gridSize,
       mineCount,
@@ -13,7 +20,13 @@ export function Game() {
       handleCellClick,
       handleCellRightClick,
       getGameState
-   } = useGame({ initSize: 9, initMineCount: 10 });
+   } = useGame({ initSize, initMineCount });
+
+   const handleSettingsUpdate = (newGridSize: number, newMineCount: number) => {
+      setCookie('size', newGridSize);
+      setCookie('mineCount', newMineCount);
+      resetBoard(newGridSize, newMineCount);
+   }
 
    return (
       <div className="game" onContextMenu={(e) => e.preventDefault()}>
@@ -22,8 +35,7 @@ export function Game() {
             mineCount={mineCount}
             gameState={getGameState()}
             minesLeft={mineCount - board.flagged.countBy(Boolean)}
-            onSettingsUpdate={resetBoard}
-            onRestart={() => resetBoard(gridSize, mineCount)}
+            onSettingsUpdate={handleSettingsUpdate}
          />
 
          <Board

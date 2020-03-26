@@ -26,18 +26,19 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
 
    const [firstClick, setFirstClick] = useState<number | null>(null);
 
-   const getInitState = (size: number) => ({
-      mines: [],
-      revealed: Array(size * size).fill(false),
-      flagged: Array(size * size).fill(false),
-      adjacent: []
-   }) as BoardState;
+   const [mines, setMines] = useState<boolean[]>([]);
+   const [adjacent, setAdjacent] = useState<(number | null)[]>([]);
+   const [revealed, setRevealed] = useState(Array(gridSize * gridSize).fill(false));
+   const [flagged, setFlagged] = useState(Array(gridSize * gridSize).fill(false));
 
-   const [board, setBoard] = useState(getInitState(gridSize));
    const resetBoard = (size: number, mineCount: number) => {
       setGridSize(size);
       setMineCount(mineCount);
-      setBoard(getInitState(size));
+
+      setMines([]);
+      setAdjacent([]);
+      setRevealed(Array(size * size).fill(false));
+      setFlagged(Array(size * size).fill(false));
    }
 
    const populateBoard = useCallback((firstClickedCell: number) => {
@@ -54,12 +55,11 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
             : getNeighbors(cell).countBy((n) => mines[n])
       );
 
-      setBoard({ ...board, mines, adjacent });
-   }, [board, gridSize, mineCount, getNeighbors]);
+      setMines(mines);
+      setAdjacent(adjacent);
+   }, [gridSize, mineCount, getNeighbors]);
 
    const getGameState = useCallback(() => {
-      const { mines, revealed, flagged } = board;
-
       const emptyCells = mines.map(isMine => !isMine);
       const flaggedAllMines = mines.equals(flagged);
 
@@ -73,70 +73,73 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       }
 
       return GameState.InProgress;
-   }, [board]);
+   }, [mines, flagged, revealed]);
 
    const handleCellClick = useCallback((cell: number) => {
       if (getGameState() !== GameState.InProgress) return;
 
-      if (board.mines.length === 0) {
+      if (mines.length === 0) {
          populateBoard(cell);
          setFirstClick(cell);
          return;
       }
 
       const revealAllMines = () => {
-         const revealed = board.revealed
-            .zip(board.mines)
+         const nextRevealed = revealed
+            .zip(mines)
             .map(([isRevealed, isMine]) => isRevealed || isMine);
 
-         setBoard({ ...board, revealed });
+         setRevealed(nextRevealed);
       }
 
       const revealCascade = (...queue: number[]) => {
-         let { revealed } = board;
-
-         queue.forEach(cell => revealed[cell] = true);
+         let nextRevealed = revealed.slice()
+         queue.forEach(cell => nextRevealed[cell] = true);
 
          while (queue.length > 0) {
             const center = queue.shift() as number;
 
-            if (board.adjacent[center] === 0) {
-               const unrevealed = getNeighbors(center).filter(n => !revealed[n]);
-               unrevealed.forEach(u => revealed[u] = true);
+            if (adjacent[center] === 0) {
+               const unrevealed = getNeighbors(center).filter(n => !nextRevealed[n]);
+               unrevealed.forEach(u => nextRevealed[u] = true);
                queue.push(...unrevealed);
             }
          }
 
-         return { ...board, revealed };
+         return nextRevealed;
       }
 
       const revealUnflaggedNeighbors = (cell: number) => {
          const neighbors = getNeighbors(cell);
 
-         const adjacentFlags = neighbors.filter(n => board.flagged[n])
-         if (adjacentFlags.length !== board.adjacent[cell]) return;
+         const adjacentFlags = neighbors.filter(n => flagged[n])
+         if (adjacentFlags.length !== adjacent[cell]) return;
 
-         const unflaggedNeighbors = neighbors.filter(n => !(board.revealed[n] || board.flagged[n]));
+         const unflaggedNeighbors = neighbors.filter(n => !(revealed[n] || flagged[n]));
 
-         setBoard(revealCascade(...unflaggedNeighbors));
+         setRevealed(revealCascade(...unflaggedNeighbors));
       }
 
       const revealCell = (cell: number) => {
-         let nextBoard = revealCascade(cell);
-         nextBoard.flagged[cell] = false;
-         setBoard(nextBoard);
+         const nextRevealed = revealCascade(cell);
+         const nextFlagged = flagged.slice();
+
+         nextFlagged[cell] = false;
+
+         setRevealed(nextRevealed);
+         setFlagged(nextFlagged);
       }
 
-      if (board.flagged[cell]) return;
+      if (flagged[cell]) return;
 
-      if (board.mines[cell]) {
+      if (mines[cell]) {
          revealAllMines();
-      } else if (board.revealed[cell]) {
+      } else if (revealed[cell]) {
          revealUnflaggedNeighbors(cell);
       } else {
          revealCell(cell);
       }
-   }, [board, getGameState, getNeighbors, populateBoard]);
+   }, [mines, revealed, flagged, adjacent, getGameState, getNeighbors, populateBoard]);
 
    if (firstClick) {
       handleCellClick(firstClick);
@@ -144,9 +147,9 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
    }
 
    const flagCell = (cell: number) => {
-      let flagged = board.flagged.slice();
-      flagged[cell] = !flagged[cell];
-      setBoard({ ...board, flagged });
+      let nextFlagged = flagged.slice();
+      nextFlagged[cell] = !nextFlagged[cell];
+      setFlagged(nextFlagged);
    }
 
    const handleCellRightClick = (event: SyntheticEvent, cell: number) => {
@@ -160,7 +163,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       gridSize,
       mineCount,
       setMineCount,
-      board,
+      board: { mines, revealed, flagged, adjacent },
       resetBoard,
       handleCellClick,
       handleCellRightClick,

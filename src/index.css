@@ -1,15 +1,71 @@
+html, body {
+   margin: 0;
+   height: 100%;
+}
+
 body {
    font-family: 'Montserrat', sans-serif;
 }
 
-input[type="text"] {
-   max-width: 50px;
-   margin-left: 5px;
-   margin-right: 30px;
+h1 {
+   font-weight: 900;
+   margin-top: 25px;
 }
 
 .game {
    user-select: none;
+   display: grid;
+   grid-template-columns: 340px auto;
+}
+
+.control-panel {
+   display: flex;
+   flex-direction: column;
+   flex: 0 0 auto;
+   margin: 0 30px;
+   padding-right: 30px;
+
+   border-right: 1px solid #eee;
+
+   overflow-y: scroll;
+   height: 100vh;
+}
+
+.control-panel form {
+   display: flex;
+   flex-direction: column;
+}
+
+.control-panel label {
+   margin: 6px 0;
+}
+
+.control-panel input[type="text"] {
+   max-width: 50px;
+   margin-left: 10px;
+   margin-right: 30px;
+
+   font-size: 1rem;
+   
+   border: none;
+   border-bottom: 2px solid dodgerblue;
+
+   outline: none;
+}
+
+.control-panel button {
+   font-family: 'Montserrat', sans-serif;
+   font-size: 1.2rem;
+   font-weight: 700;
+   margin: 10px 0;
+}
+
+.rules {
+   font-size: 1rem;
+}
+
+.board {
+   margin: 25px 0;
 }
 
 .board-row {
@@ -23,8 +79,10 @@ input[type="text"] {
    min-height: 40px;
    max-height: 40px;
 
-   font-size: 24px;
+   font-size: 1.5rem;
    font-family: 'Montserrat', sans-serif;
+   font-weight: 800;
+
    margin: 1px;
    border: 1px solid lightgray;
 }
