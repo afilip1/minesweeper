@@ -1,43 +1,55 @@
 import React from "react";
-import { useCookies } from "react-cookie";
 import "src/util"
 import { ControlPanel } from "src/components/controlpanel";
 import { Board } from "src/components/board";
 import { useGame } from "src/hooks/game"
+import { useLocalStorageNumber } from "src/hooks/localstorage";
 
 export function Game() {
-   const [cookies, setCookie] = useCookies(["minekong"]);
-
-   const initSize = cookies.size ?? 9;
-   const initMineCount = cookies.mineCount ?? 10;
+   const [initSize, setInitSize] = useLocalStorageNumber('size', 9);
+   const [initMineCount, setInitMineCount] = useLocalStorageNumber('mineCount', 10);
 
    const {
       gridSize,
       mineCount,
       board,
       resetBoard,
-      handleCellLeftClick,
-      handleCellRightClick,
-      handleCellMiddleOver,
-      handleMiddleUp,
+      tryRevealCell,
+      tryRevealUnflaggedNeighbors,
+      tryFlagCell,
+      highlightCells,
+      unhighlightCells,
       getGameState,
    } = useGame({ initSize, initMineCount });
 
    const handleSettingsUpdate = (newGridSize: number, newMineCount: number) => {
-      setCookie('size', newGridSize);
-      setCookie('mineCount', newMineCount);
+      setInitSize(newGridSize);
+      setInitMineCount(newMineCount);
       resetBoard(newGridSize, newMineCount);
    }
 
    const handleMouseUp = (e: React.MouseEvent) => {
       if (e.button === 1) {
-         handleMiddleUp();
+         unhighlightCells();
       }
    }
 
    const handleMiddleOver = (e: React.MouseEvent, i: number) => {
       if (e.buttons === 4) {
-         handleCellMiddleOver(i);
+         highlightCells(i);
+      }
+   }
+
+   const handleRightClick = (e: React.MouseEvent, i: number) => {
+      e.preventDefault();
+      tryFlagCell(i);
+   }
+
+   const handleLeftClick = (i: number) => {
+      if (board.revealed[i]) {
+         tryRevealUnflaggedNeighbors(i);
+      } else {
+         tryRevealCell(i);
       }
    }
 
@@ -54,8 +66,8 @@ export function Game() {
          <Board
             size={gridSize}
             board={board}
-            onLeftClick={handleCellLeftClick}
-            onRightClick={handleCellRightClick}
+            onLeftClick={handleLeftClick}
+            onRightClick={handleRightClick}
             onMiddleOver={handleMiddleOver}
          />
       </div>
