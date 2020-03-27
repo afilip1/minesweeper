@@ -6,8 +6,8 @@ import { useGame } from "src/hooks/game"
 import { useLocalStorageNumber } from "src/hooks/localstorage";
 
 export function Game() {
-   const [initSize, setInitSize] = useLocalStorageNumber('size', 9);
-   const [initMineCount, setInitMineCount] = useLocalStorageNumber('mineCount', 10);
+   const [cachedSize, setCachedSize] = useLocalStorageNumber('size', 9);
+   const [cachedMineCount, setCachedMineCount] = useLocalStorageNumber('mineCount', 10);
 
    const {
       gridSize,
@@ -20,11 +20,11 @@ export function Game() {
       highlightCells,
       unhighlightCells,
       getGameState,
-   } = useGame({ initSize, initMineCount });
+   } = useGame({ initSize: cachedSize, initMineCount: cachedMineCount });
 
    const handleSettingsUpdate = (newGridSize: number, newMineCount: number) => {
-      setInitSize(newGridSize);
-      setInitMineCount(newMineCount);
+      setCachedSize(newGridSize);
+      setCachedMineCount(newMineCount);
       resetBoard(newGridSize, newMineCount);
    }
 

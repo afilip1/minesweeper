@@ -42,19 +42,15 @@ function renderCell(props: RenderCellProps, cellId: number) {
 
 type BoardProps = { size: number } & RenderCellProps;
 
-export function Board({ size, ...props }: BoardProps) {
-   let cellIds = range(0, size * size);
-   let rowIds = range(0, size);
+function Board({ size, ...props }: BoardProps) {
+   const cellIds = range(0, size * size);
+   const cells = cellIds.map(id => renderCell(props, id));
 
-   let rows = rowIds.map(rowId =>
-      <div className="board-row" key={rowId}>
-         {
-            cellIds
-               .slice(rowId * size, (rowId + 1) * size) // get cells in the row
-               .map(cellId => renderCell(props, cellId))
-         }
+   return (
+      <div className="board" style={{ gridTemplateColumns: `repeat(${size}, 40px)`, gridAutoRows: "40px" }}>
+         {cells}
       </div>
    );
-
-   return <div className="board">{rows}</div>;
 }
+
+export { Board }
