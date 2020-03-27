@@ -1,5 +1,6 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, ReactNode } from "react";
 import { GameState } from "src/hooks/game"
+import { CollapsiblePanel } from "./collapsiblepanel";
 
 type GameStatusProps = {
    gameState: GameState,
@@ -69,25 +70,21 @@ export function ControlPanel(props: ControlPanelProps) {
             <button type="submit">{settingsChanged ? "Apply and restart" : "Restart"}</button>
          </form>
 
-         <div className="rules">
-            <div>
-               <h2>Rules</h2>
-               <p>A board contains a number of cells. Each cell can be either empty or a mine.</p>
-               <p>The goal of the game is to flag all the mines and reveal all the empty cells.</p>
-               <p>If you reveal a mine, it's game over!</p>
-               <p>Empty cells show a number of mines that reside in the 8 adjacent cells.</p>
-            </div>
+         <CollapsiblePanel title="Rules">
+            <p>The board contains a number of cells. Each cell can be either empty or a mine.</p>
+            <p>The goal of the game is to flag all the mines and reveal all the empty cells.</p>
+            <p>If you reveal a mine, it's game over!</p>
+            <p>Empty cells show a number of mines that reside in the 8 adjacent cells.</p>
+         </CollapsiblePanel>
 
-            <div>
-               <h2>Controls</h2>
-               <p><strong>Left click</strong> on an unrevealed cell to reveal it.</p>
-               <p><strong>Right click</strong> on an unrevealed cell to flag it as a mine.</p>
-               <p><strong>Hold middle mouse button</strong> over an revealed cell to highlight its neighbors.</p>
+         <CollapsiblePanel title="Controls">
+            <p><strong>Left click</strong> on an unrevealed cell to reveal it.</p>
+            <p><strong>Right click</strong> on an unrevealed cell to flag it as a mine.</p>
+            <p><strong>Hold middle mouse button</strong> over an revealed cell to highlight its neighbors.</p>
 
-               <p><strong>Tip #1:</strong> If you've placed enough flags near a revealed cell, you can left click on it to automatically reveal cells without flags.</p>
-               <p><strong>Tip #2:</strong> The first cell you click will never be a mine, so don't worry about where to click.</p>
-            </div>
-         </div>
+            <p><strong>Tip #1:</strong> If you've placed enough flags near a revealed cell, you can left click on it to automatically reveal cells without flags.</p>
+            <p><strong>Tip #2:</strong> The first cell you click will never be a mine, so don't worry about where to click.</p>
+         </CollapsiblePanel>
       </div>
    );
 }

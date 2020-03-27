@@ -7,6 +7,10 @@ body {
    font-family: 'Montserrat', sans-serif;
 }
 
+::-moz-focus-inner {
+   border: 0;
+}
+
 h1 {
    font-weight: 900;
    margin-top: 25px;
@@ -25,7 +29,7 @@ h1 {
    margin: 0 30px;
    padding-right: 30px;
    border-right: 1px solid #eee;
-   overflow-y: scroll;
+   overflow-y: auto;
    height: 100vh;
 }
 
@@ -35,14 +39,14 @@ h1 {
 }
 
 .control-panel label {
-   margin: 6px 0;
+   margin: 10px 0;
 }
 
 .control-panel input[type="text"] {
-   max-width: 50px;
-   margin-left: 10px;
-   margin-right: 30px;
-   font-size: 1rem;
+   width: 100%;
+   margin-top: 5px;
+   font-family: "Montserrat", sans-serif;
+   font-size: 1.3rem;
    border: none;
    border-bottom: 2px solid dodgerblue;
    outline: none;
@@ -53,10 +57,6 @@ h1 {
    font-size: 1.2rem;
    font-weight: 700;
    margin: 10px 0;
-}
-
-.rules {
-   font-size: 1rem;
 }
 
 .board {
@@ -82,6 +82,29 @@ h1 {
 }
 
 .cell-dimmed {
-   filter: brightness(0.8) opacity(0.6) blur(1px) grayscale();
-   /* border: 1px solid darkgray; */
+   filter: brightness(0.8) opacity(0.7) blur(1px) saturate(0.5);
+   border: 1px solid darkgray;
+}
+
+.collapsible:first-of-type {
+   margin-top: 20px;
+}
+
+.collapsible button {
+   --size: 40px;
+   width: var(--size);
+   height: var(--size);
+   border: 2px solid dodgerblue;
+   border-radius: calc(var(--size) / 2);
+   padding: 0 5px;
+   margin: 5px 10px;
+   font-size: 24px;
+   font-weight: 700;
+   background: none;
+   text-align: center;
+   outline: none;
+}
+
+.collapsible p {
+   margin-top: 10px;
 }
