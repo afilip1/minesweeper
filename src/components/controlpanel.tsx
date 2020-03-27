@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, ReactNode } from "react";
+import React, { useState, FormEvent } from "react";
 import { GameState } from "src/hooks/game"
 import { CollapsiblePanel } from "./collapsiblepanel";
 

@@ -12,7 +12,7 @@ type RenderCellProps = {
 
 function renderCell(props: RenderCellProps, cellId: number) {
    const {
-      board: { mines, flagged, revealed, adjacent, dimmed },
+      board: { mines, flagged, revealed, adjacent, dimmed, lastRevealed },
       onLeftClick, onRightClick, onMiddleOver
    } = props;
 
@@ -25,6 +25,7 @@ function renderCell(props: RenderCellProps, cellId: number) {
             onLeftClick={() => onLeftClick(cellId)}
             onMiddleOver={(e) => onMiddleOver(e, cellId)}
             adjacentCount={adjacent[cellId]}
+            isLastRevealed={lastRevealed !== null && lastRevealed === cellId}
          />
       );
    } else {

@@ -2,12 +2,13 @@ import { useState, useCallback } from "react";
 import { useGrid } from "src/hooks/grid"
 
 export type BoardState = {
-   mines: boolean[],
-   revealed: boolean[],
-   flagged: boolean[],
-   adjacent: (number | null)[],
-   dimmed: boolean[],
-};
+   mines: boolean[]
+   revealed: boolean[]
+   flagged: boolean[]
+   adjacent: (number | null)[]
+   dimmed: boolean[]
+   lastRevealed: number | null
+}
 
 export enum GameState {
    InProgress,
@@ -32,6 +33,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
    const [revealed, setRevealed] = useState(Array(gridSize * gridSize).fill(false));
    const [flagged, setFlagged] = useState(Array(gridSize * gridSize).fill(false));
    const [dimmed, setDimmed] = useState(Array(gridSize * gridSize).fill(false));
+   const [lastRevealed, setLastRevealed] = useState<number | null>(null);
 
    const resetBoard = (size: number, mineCount: number) => {
       setGridSize(size);
@@ -42,6 +44,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       setRevealed(Array(size * size).fill(false));
       setFlagged(Array(size * size).fill(false));
       setDimmed(Array(size * size).fill(false));
+      setLastRevealed(null);
    }
 
    const populateBoard = useCallback((firstClickedCell: number) => {
@@ -147,6 +150,8 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       } else {
          revealCell(cell);
       }
+
+      setLastRevealed(cell);
    }, [gridSize, mines, revealed, flagged, getGameState, getNeighbors, populateBoard, revealCascade]);
 
    const tryRevealUnflaggedNeighbors = (cell: number) => {
@@ -191,7 +196,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       gridSize,
       mineCount,
       setMineCount,
-      board: { mines, revealed, flagged, adjacent, dimmed },
+      board: { mines, revealed, flagged, adjacent, dimmed, lastRevealed },
       resetBoard,
       tryRevealCell,
       tryFlagCell,

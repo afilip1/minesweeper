@@ -54,9 +54,10 @@ type CellRevealedProps = {
    adjacentCount: number | null,
    onLeftClick: () => void,
    onMiddleOver: (e: React.MouseEvent) => void,
+   isLastRevealed: boolean
 };
 
-function CellRevealed({ isMine, isDimmed, adjacentCount, onLeftClick, onMiddleOver }: CellRevealedProps) {
+function CellRevealed({ isMine, isDimmed, isLastRevealed, adjacentCount, onLeftClick, onMiddleOver }: CellRevealedProps) {
    const countColors = [undefined, "blue", "green", "red", "purple", "maroon", "turquoise", "black", "gray"];
 
    return (
@@ -67,7 +68,7 @@ function CellRevealed({ isMine, isDimmed, adjacentCount, onLeftClick, onMiddleOv
          onRightClick={(e) => e.preventDefault()}
          onMiddleOver={onMiddleOver}
       >
-         {isMine && "💣"}
+         {isMine && (isLastRevealed ? "💥" : "💣")}
          {adjacentCount !== null && adjacentCount > 0 &&
             <span style={{ color: countColors[adjacentCount] }}>{adjacentCount}</span>
          }
