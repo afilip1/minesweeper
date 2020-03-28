@@ -29,4 +29,7 @@ a {
    grid-template-columns: 340px auto;
 }
 
-/* other stuff */
+.grid {
+   display: grid;
+   gap: 3px;
+}

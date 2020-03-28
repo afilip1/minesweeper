@@ -18,8 +18,10 @@ export function Board({ gridSize, boardState, ...handlers }: BoardProps) {
    const cells = cellIds.map(id => renderCell(id, boardState, handlers));
 
    return (
-      <SquareGrid size={gridSize} cellSize="50px">
-         {cells}
-      </SquareGrid>
+      <div className="board">
+         <SquareGrid size={gridSize} cellSize="50px">
+            {cells}
+         </SquareGrid>
+      </div>
    );
 }

@@ -2,7 +2,7 @@
    display: flex;
    flex-direction: column;
    flex: 0 0 auto;
-   margin: 0 30px;
+   margin-left: 30px;
    padding-right: 30px;
    border-right: 1px solid #eee;
    overflow-y: auto;
@@ -13,6 +13,7 @@
    font-weight: 900;
    margin-top: 25px;
    margin-bottom: 0;
+   text-transform: uppercase;
 }
 
 .side-panel h2 {
@@ -41,6 +42,11 @@
    font-size: 1.2rem;
    font-weight: 700;
    margin: 20px 0;
+   width: 100%;
+}
+
+.grid {
+   gap: 10px;
 }
 
 .collapsible:first-of-type {

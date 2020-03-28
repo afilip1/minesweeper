@@ -1,15 +1,15 @@
 import React, { ReactNode } from "react";
 
-type SquareGridProps = { size: number, cellSize: string, children: ReactNode };
+type SquareGridProps = { size: number, cellSize?: string, children: ReactNode };
 
-export function SquareGrid({ size, cellSize, children }: SquareGridProps) {
+export function SquareGrid({ size, cellSize = "1fr", children }: SquareGridProps) {
    const gridStyle = {
       gridTemplateColumns: `repeat(${size}, ${cellSize})`,
       gridAutoRows: cellSize
    };
 
    return (
-      <div className="board-grid" style={gridStyle}>
+      <div className="grid" style={gridStyle}>
          {children}
       </div>
    );

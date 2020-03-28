@@ -1,20 +1,22 @@
 import React from "react";
-import { Settings, SettingsProps } from "./settings";
+import { ControlPanel, ControlPanelProps } from "./controlpanel";
 import { StatusProps, Status } from "./status";
 import { Info } from "./info";
 import "./sidepanel.css";
 
-type ControlPanelProps = SettingsProps & StatusProps
+type SidePanelProps = ControlPanelProps & StatusProps
 
-export function SidePanel({ gameState, minesLeft, ...settingsProps }: ControlPanelProps) {
+export function SidePanel({ gameState, minesLeft, ...controlPanelProps }: SidePanelProps) {
    return (
       <div className="side-panel">
-         <h1>MINEKONG</h1>
-         <small>inspired by <a href="https://store.steampowered.com/app/265890/Hexcells/">Hexcells</a></small>
+         <h1>Minekong</h1>
+         <small>
+            inspired by <a href="https://store.steampowered.com/app/265890/Hexcells/">Hexcells</a>
+         </small>
 
          <Status gameState={gameState} minesLeft={minesLeft} />
 
-         <Settings {...settingsProps} />
+         <ControlPanel {...controlPanelProps} />
 
          <Info />
       </div>

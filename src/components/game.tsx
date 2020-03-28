@@ -53,8 +53,14 @@ export function Game() {
       }
    }
 
+   const preventScrolling = (e: React.MouseEvent) => {
+      if (e.buttons === 4) {
+         e.preventDefault();
+      }
+   }
+
    return (
-      <div className="game" onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp}>
+      <div className="game" onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
          <SidePanel
             gridSize={gridSize}
             mineCount={mineCount}
