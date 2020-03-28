@@ -1,111 +1,32 @@
-html, body {
-   margin: 0;
-   height: 100%;
+:root {
+   --light-blue: #06a4ed;
+   --dark-blue: #149dd7;
+   --light-orange: #ffaf2a;
+   --dark-orange: #fd9f00;
+   --light-gray: #3f3d40;
+   --dark-gray: #2a2d32;
 }
 
-body {
+* {
    font-family: 'Montserrat', sans-serif;
+}
+
+html, body {
+   margin: 0;
+   user-select: none;
+}
+
+a {
+   color: black;
 }
 
 ::-moz-focus-inner {
    border: 0;
 }
 
-h1 {
-   font-weight: 900;
-   margin-top: 25px;
-}
-
 .game {
-   user-select: none;
    display: grid;
    grid-template-columns: 340px auto;
 }
 
-.control-panel {
-   display: flex;
-   flex-direction: column;
-   flex: 0 0 auto;
-   margin: 0 30px;
-   padding-right: 30px;
-   border-right: 1px solid #eee;
-   overflow-y: auto;
-   height: 100vh;
-}
-
-.control-panel form {
-   display: flex;
-   flex-direction: column;
-}
-
-.control-panel label {
-   margin: 10px 0;
-}
-
-.control-panel input[type="text"] {
-   width: 100%;
-   margin-top: 5px;
-   font-family: "Montserrat", sans-serif;
-   font-size: 1.3rem;
-   border: none;
-   border-bottom: 2px solid dodgerblue;
-   outline: none;
-}
-
-.control-panel button {
-   font-family: 'Montserrat', sans-serif;
-   font-size: 1.2rem;
-   font-weight: 700;
-   margin: 10px 0;
-}
-
-.board {
-   margin: 25px 0;
-   display: grid;
-   gap: 2px;
-}
-
-.cell {
-   min-width: 40px;
-   max-width: 40px;
-   min-height: 40px;
-   max-height: 40px;
-   padding: 0;
-   font-size: 1.5rem;
-   font-family: 'Montserrat', sans-serif;
-   font-weight: 800;
-   border: 1px solid lightgray;
-   text-align: center;
-}
-
-.cell-revealed {
-   background: lightgray;
-}
-
-.cell-dimmed {
-   filter: brightness(0.8) opacity(0.7) blur(1px) saturate(0.5);
-   border: 1px solid darkgray;
-}
-
-.collapsible:first-of-type {
-   margin-top: 20px;
-}
-
-.collapsible button {
-   --size: 40px;
-   width: var(--size);
-   height: var(--size);
-   border: 2px solid dodgerblue;
-   border-radius: calc(var(--size) / 2);
-   padding: 0 5px;
-   margin: 5px 10px;
-   font-size: 24px;
-   font-weight: 700;
-   background: none;
-   text-align: center;
-   outline: none;
-}
-
-.collapsible p {
-   margin-top: 10px;
-}
+/* other stuff */

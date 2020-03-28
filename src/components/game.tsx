@@ -1,9 +1,9 @@
 import React from "react";
 import "src/util"
-import { ControlPanel } from "src/components/controlpanel";
-import { Board } from "src/components/board";
+import { SidePanel } from "src/components/sidepanel/sidepanel";
 import { useGame } from "src/hooks/game"
 import { useLocalStorageNumber } from "src/hooks/localstorage";
+import { Board } from "./board/board";
 
 export function Game() {
    const [cachedSize, setCachedSize] = useLocalStorageNumber('size', 9);
@@ -55,7 +55,7 @@ export function Game() {
 
    return (
       <div className="game" onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp}>
-         <ControlPanel
+         <SidePanel
             gridSize={gridSize}
             mineCount={mineCount}
             gameState={getGameState()}
@@ -64,8 +64,8 @@ export function Game() {
          />
 
          <Board
-            size={gridSize}
-            board={board}
+            gridSize={gridSize}
+            boardState={board}
             onLeftClick={handleLeftClick}
             onRightClick={handleRightClick}
             onMiddleOver={handleMiddleOver}
