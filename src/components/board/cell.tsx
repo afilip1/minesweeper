@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { BoardState } from "src/hooks/game";
 import { renderRevealedCell } from "./revealedcell";
 import { renderHiddenCell } from "./hiddencell";
+import { Button } from "../common/button";
 
 export type Handlers = {
    onLeftClick: (i: number) => void
@@ -32,8 +33,8 @@ function Cell({ isDimmed, children }: CellProps) {
    if (isDimmed) className += " cell-dimmed";
 
    return (
-      <div className={className}>
+      <Button className={className}>
          {children}
-      </div>
+      </Button>
    );
 }

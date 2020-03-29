@@ -28,8 +28,3 @@ a {
    display: grid;
    grid-template-columns: 340px auto;
 }
-
-.grid {
-   display: grid;
-   gap: 3px;
-}

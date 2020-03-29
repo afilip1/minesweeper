@@ -1,0 +1,8 @@
+.button {
+   transition: filter 0.5s ease;
+}
+
+.button:active {
+   transition: filter 0s;
+   filter: opacity(0.8) contrast(1.2);
+}
