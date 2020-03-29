@@ -1,4 +1,13 @@
 import React from "react";
+import styled from "styled-components";
+
+const StyledInput = styled.input`
+   width: 100%;
+   font-size: 1.5rem;
+   border: none;
+   border-bottom: 3px solid var(--light-blue);
+   outline: none;
+`;
 
 type LabeledTextInputProps = {
    label: string
@@ -13,7 +22,7 @@ export function LabeledTextInput({ label, value, onChange }: LabeledTextInputPro
    return (
       <label>
          {label}
-         <input type="text" value={value} onChange={onInputChange} />
+         <StyledInput type="text" value={value} onChange={onInputChange} />
       </label>
    );
 }
@@ -31,7 +40,7 @@ export function LabeledNumericInput({ label, value, onChange }: LabeledNumericIn
    return (
       <label>
          {label}
-         <input type="number" value={value} onChange={onInputChange} />
+         <StyledInput type="number" value={value} onChange={onInputChange} />
       </label>
    );
 }

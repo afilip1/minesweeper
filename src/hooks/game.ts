@@ -165,13 +165,15 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       setRevealed(revealCascade(...unflaggedNeighbors));
    }
 
-   if (firstClick) {
+   if (firstClick !== null) {
       tryRevealCell(firstClick);
       setFirstClick(null);
    }
 
    const tryFlagCell = (cell: number) => {
       if (getGameState() !== GameState.InProgress) return;
+
+      if (revealed[cell]) return;
 
       let nextFlagged = flagged.slice();
       nextFlagged[cell] = !nextFlagged[cell];

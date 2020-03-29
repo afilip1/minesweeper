@@ -23,8 +23,3 @@ a {
 ::-moz-focus-inner {
    border: 0;
 }
-
-.game {
-   display: grid;
-   grid-template-columns: 340px auto;
-}

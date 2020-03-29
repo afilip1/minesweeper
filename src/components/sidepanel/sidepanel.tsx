@@ -1,24 +1,29 @@
 import React from "react";
-import { ControlPanel, ControlPanelProps } from "./controlpanel";
+import { Settings, SettingsProps } from "./settings";
 import { StatusProps, Status } from "./status";
 import { Info } from "./info";
-import "./sidepanel.css";
+import styled from "styled-components";
+import { Header } from "./header";
 
-type SidePanelProps = ControlPanelProps & StatusProps
+const StyledSidePanel = styled.div`
+   padding: 0 30px;
+   border-right: 1px solid #eee;
+   overflow-y: auto;
+   height: 100vh;
+`;
+
+type SidePanelProps = SettingsProps & StatusProps
 
 export function SidePanel({ gameState, minesLeft, ...controlPanelProps }: SidePanelProps) {
    return (
-      <div className="side-panel">
-         <h1>Minekong</h1>
-         <small>
-            inspired by <a href="https://store.steampowered.com/app/265890/Hexcells/">Hexcells</a>
-         </small>
+      <StyledSidePanel>
+         <Header />
 
          <Status gameState={gameState} minesLeft={minesLeft} />
 
-         <ControlPanel {...controlPanelProps} />
+         <Settings {...controlPanelProps} />
 
          <Info />
-      </div>
+      </StyledSidePanel>
    );
 }

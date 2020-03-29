@@ -1,18 +1,18 @@
 import React from "react";
-import "./subtextbutton.css";
-import { Button } from "./button";
+import { Clickable } from "./clickable";
 
-type FancyButtonProps = {
+type SubtextButtonProps = {
+   className?: string
    label: string
-   onClick: () => void
+   onClick?: (e: React.MouseEvent) => void
    children: React.ReactNode
 }
 
-export function SubtextButton({ label, onClick, children }: FancyButtonProps) {
+export function SubtextButton({ label, children, ...props }: SubtextButtonProps) {
    return (
-      <Button className="subtext-button" onClick={onClick}>
+      <Clickable {...props}>
          <strong>{label}</strong><br />
          <small>{children}</small>
-      </Button>
+      </Clickable>
    );
 }

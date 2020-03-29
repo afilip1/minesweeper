@@ -4,6 +4,12 @@ import { SidePanel } from "src/components/sidepanel/sidepanel";
 import { useGame } from "src/hooks/game"
 import { useLocalStorageNumber } from "src/hooks/localstorage";
 import { Board } from "./board/board";
+import styled from "styled-components";
+
+const StyledGame = styled.div`
+   display: grid;
+   grid-template-columns: 340px auto;
+`;
 
 export function Game() {
    const [cachedSize, setCachedSize] = useLocalStorageNumber('size', 9);
@@ -60,7 +66,7 @@ export function Game() {
    }
 
    return (
-      <div className="game" onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
+      <StyledGame onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
          <SidePanel
             gridSize={gridSize}
             mineCount={mineCount}
@@ -76,6 +82,6 @@ export function Game() {
             onRightClick={handleRightClick}
             onMiddleOver={handleMiddleOver}
          />
-      </div>
+      </StyledGame>
    );
 }
