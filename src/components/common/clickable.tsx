@@ -7,6 +7,6 @@ export const Clickable = styled.div`
 
    &:active {
       transition: filter 0s;
-      filter: opacity(0.8) contrast(1.2);
+      filter: brightness(1.2);
    }
 `;
