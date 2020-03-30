@@ -23,7 +23,11 @@ const Shadow = styled.div`
    grid-area: board;
    content: '';
    height: 330px;
-   width: 100vw;
+
+   @media screen and (min-width: 768px) {
+      display: none;
+   }
+
    box-shadow: inset 0 0 5px ${({theme}) => theme.colors.background};
    pointer-events: none;
 
