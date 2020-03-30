@@ -1,19 +1,18 @@
 import React, { useState } from "react";
-import { LabeledNumericInput } from "../common/labeledinput";
+import { LabeledNumericInput } from "./labeledinput";
 import styled from "styled-components";
 import { Preset } from "./preset";
 
-const SettingsGrid = styled.div<{columns: number}>`
+const SettingsGrid = styled.div<{ columns: number }>`
    display: grid;
    grid-template-columns: repeat(${props => props.columns}, 1fr);
    gap: 10px;
-   margin-bottom: 10px;
+   margin: 10px 0;
 `;
 
 const RestartButton = styled.button`
    font-size: 1.2rem;
    font-weight: 700;
-   margin: 20px 0;
    width: 100%;
 `;
 
@@ -42,16 +41,16 @@ export function Settings(props: SettingsProps) {
 
    return (
       <div>
-         <SettingsGrid columns={3}>
-            <Preset label="Easy" gridSize={9} mineCount={10} onSelectPreset={handleSelectPreset} />
-            <Preset label="Harder" gridSize={16} mineCount={40} onSelectPreset={handleSelectPreset} />
-            <Preset label="Fuck" gridSize={24} mineCount={99} onSelectPreset={handleSelectPreset} />
-         </SettingsGrid>
-
          <form onSubmit={handleSubmit}>
             <SettingsGrid columns={2}>
                <LabeledNumericInput label="Grid size" value={gridSize} onChange={setGridSize} />
                <LabeledNumericInput label="Mine count" value={mineCount} onChange={setMineCount} />
+            </SettingsGrid>
+
+            <SettingsGrid columns={3}>
+               <Preset label="Easy" gridSize={9} mineCount={10} onSelectPreset={handleSelectPreset} />
+               <Preset label="Medium" gridSize={16} mineCount={40} onSelectPreset={handleSelectPreset} />
+               <Preset label="Hard" gridSize={24} mineCount={99} onSelectPreset={handleSelectPreset} />
             </SettingsGrid>
 
             <RestartButton>Restart</RestartButton>

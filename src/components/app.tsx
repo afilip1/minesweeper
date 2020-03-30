@@ -2,19 +2,15 @@ import React from "react";
 import "src/util"
 import { SidePanel } from "src/components/sidepanel/sidepanel";
 import { useGame } from "src/hooks/game"
-import { useLocalStorageNumber } from "src/hooks/localstorage";
 import { Board } from "./board/board";
 import styled from "styled-components";
 
-const StyledGame = styled.div`
+const StyledApp = styled.div`
    display: grid;
-   grid-template-columns: 340px auto;
+   grid-template-columns: 360px auto;
 `;
 
-export function Game() {
-   const [cachedSize, setCachedSize] = useLocalStorageNumber('size', 9);
-   const [cachedMineCount, setCachedMineCount] = useLocalStorageNumber('mineCount', 10);
-
+export function App() {
    const {
       gridSize,
       mineCount,
@@ -26,11 +22,9 @@ export function Game() {
       highlightCells,
       unhighlightCells,
       getGameState,
-   } = useGame({ initSize: cachedSize, initMineCount: cachedMineCount });
+   } = useGame({ initSize: 9, initMineCount: 10 });
 
    const handleSettingsUpdate = (newGridSize: number, newMineCount: number) => {
-      setCachedSize(newGridSize);
-      setCachedMineCount(newMineCount);
       resetBoard(newGridSize, newMineCount);
    }
 
@@ -66,7 +60,7 @@ export function Game() {
    }
 
    return (
-      <StyledGame onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
+      <StyledApp onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
          <SidePanel
             gridSize={gridSize}
             mineCount={mineCount}
@@ -82,6 +76,6 @@ export function Game() {
             onRightClick={handleRightClick}
             onMiddleOver={handleMiddleOver}
          />
-      </StyledGame>
+      </StyledApp>
    );
 }

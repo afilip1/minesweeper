@@ -1,5 +1,5 @@
 import React from "react";
-import { Settings, SettingsProps } from "./settings";
+import { Settings, SettingsProps } from "./settings/settings";
 import { StatusProps, Status } from "./status";
 import { Info } from "./info";
 import styled from "styled-components";
@@ -23,7 +23,7 @@ export function SidePanel({ gameState, minesLeft, ...controlPanelProps }: SidePa
 
          <Settings {...controlPanelProps} />
 
-         <Info />
+         {/* <Info /> */}
       </StyledSidePanel>
    );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Clickable } from "./clickable";
+import { Clickable } from "../../common/clickable";
 
 type SubtextButtonProps = {
    className?: string

@@ -9,24 +9,6 @@ const StyledInput = styled.input`
    outline: none;
 `;
 
-type LabeledTextInputProps = {
-   label: string
-   value: string
-   onChange: (value: string) => void
-}
-
-export function LabeledTextInput({ label, value, onChange }: LabeledTextInputProps) {
-   const onInputChange = (e: React.FormEvent<HTMLInputElement>) =>
-      onChange(e.currentTarget.value);
-
-   return (
-      <label>
-         {label}
-         <StyledInput type="text" value={value} onChange={onInputChange} />
-      </label>
-   );
-}
-
 type LabeledNumericInputProps = {
    label: string
    value: number

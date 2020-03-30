@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { SubtextButton } from "../common/subtextbutton";
+import { SubtextButton } from "./subtextbutton";
 
 const PresetButton = styled(SubtextButton)`
    padding: 10px;

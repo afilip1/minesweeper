@@ -2,10 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "src/index.css";
 
-import { Game } from "src/components/game";
+import { App } from "src/components/app";
 
 function Root() {
-   return <Game />;
+   return <App />;
 }
 
 ReactDOM.render(
