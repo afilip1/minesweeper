@@ -1,8 +1,19 @@
 import React from "react";
+import styled from "styled-components";
+
+const StyledInfo = styled.div`
+   grid-area: info;
+   
+   padding: 0 30px;
+
+   @media screen and (min-width: 768px) {
+      overflow-y: auto;
+   }
+`;
 
 export function Info() {
    return (
-      <>
+      <StyledInfo>
          <details>
             <summary>Rules</summary>
             <p>The board contains a number of cells. Each cell can be either empty or a mine.</p>
@@ -20,6 +31,6 @@ export function Info() {
             <p><strong>Tip #1:</strong> If you've placed enough flags near a revealed cell, you can left click on it to automatically reveal cells without flags.</p>
             <p><strong>Tip #2:</strong> The first cell you click will never be a mine, so don't worry about where to click.</p>
          </details>
-      </>
+      </StyledInfo>
    );
 }

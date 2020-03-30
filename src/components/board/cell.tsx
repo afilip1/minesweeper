@@ -17,7 +17,11 @@ const StyledCellInner = styled.div<{ dimmed: boolean, revealed: boolean, flagged
    justify-content: center;
 
    box-sizing: border-box;
-   font-size: 1.3rem;
+
+   @media screen and (min-width: 768px) {
+      font-size: 1.5rem;
+   }
+
    font-weight: 600;
    color: white;
 

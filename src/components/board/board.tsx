@@ -4,20 +4,43 @@ import { renderCell, CellHandlers } from "./cell";
 import { range } from "src/util";
 import styled from "styled-components";
 
-const StyledBoard = styled.div`   
-   height: 100vh;
+const StyledBoard = styled.div`
+   grid-area: board;
+   
    overflow: auto;
+   padding: 10px 30px;
+
+   @media screen and (min-width: 768px) {
+      padding: 30px;
+
+      border-left: 1px solid ${props => props.theme.colors.separator};
+      transition: border 0.3s linear;
+   }
+`;
+
+const Shadow = styled.div`
+   position: relative;
+   grid-area: board;
+   content: '';
+   height: 330px;
+   width: 100vw;
+   box-shadow: inset 0 0 5px ${({theme}) => theme.colors.background};
+   pointer-events: none;
+
+   transition: box-shadow 0.3s linear;
 `;
 
 const BoardGrid = styled.div<{ gridSize: number }>`
-   --cell-size: 50px;
+   --cell-size: 30px;
+
+   @media screen and (min-width: 768px) {
+      --cell-size: 50px;
+   }
 
    display: grid;
    grid-template-columns: repeat(${props => props.gridSize}, var(--cell-size));
    grid-auto-rows: var(--cell-size);
    gap: 4px;
-
-   padding: 25px;
 `;
 
 type BoardProps = {
@@ -30,10 +53,15 @@ export function Board({ gridSize, boardState, ...handlers }: BoardProps) {
    const cells = cellIds.map(id => renderCell(id, boardState, handlers));
 
    return (
-      <StyledBoard>
-         <BoardGrid gridSize={gridSize}>
-            {cells}
-         </BoardGrid>
-      </StyledBoard>
+      <>
+         <StyledBoard>
+            <div style={{ display: "inline-block" }}>
+               <BoardGrid gridSize={gridSize}>
+                  {cells}
+               </BoardGrid>
+            </div>
+         </StyledBoard>
+         <Shadow />
+      </>
    );
 }

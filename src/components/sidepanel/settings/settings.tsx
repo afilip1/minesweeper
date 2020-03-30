@@ -3,6 +3,12 @@ import { LabeledNumericInput } from "./labeledinput";
 import styled from "styled-components";
 import { Preset } from "./preset";
 
+const StyledSettings = styled.div`
+   grid-area: settings;
+
+   padding: 0 30px;
+`;
+
 const SettingsGrid = styled.div<{ columns: number }>`
    display: grid;
    grid-template-columns: repeat(${props => props.columns}, 1fr);
@@ -40,7 +46,7 @@ export function Settings(props: SettingsProps) {
    }
 
    return (
-      <div>
+      <StyledSettings>
          <form onSubmit={handleSubmit}>
             <SettingsGrid columns={2}>
                <LabeledNumericInput label="Grid size" value={gridSize} onChange={setGridSize} />
@@ -55,6 +61,6 @@ export function Settings(props: SettingsProps) {
 
             <RestartButton>Restart</RestartButton>
          </form>
-      </div >
+      </StyledSettings >
    );
 }

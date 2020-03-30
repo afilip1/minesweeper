@@ -9,15 +9,21 @@ const Title = styled.h1`
 `;
 
 const StyledHeader = styled.header`
-   margin-top: 25px;
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
    grid-area: header;
 
+   display: flex;
+
+   justify-content: space-between;
+   align-items: center;
+   
+   padding: 0 30px;
 `;
 
-export function Header({ onThemeToggle }: { onThemeToggle: () => void }) {
+type HeaderProps = {
+   onThemeToggle: () => void
+}
+
+export function Header({ onThemeToggle }: HeaderProps) {
    return (
       <StyledHeader>
          <div>

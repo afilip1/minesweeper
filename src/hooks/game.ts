@@ -67,9 +67,8 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
 
    const getGameState = useCallback(() => {
       const emptyCells = mines.map(isMine => !isMine);
-      const flaggedAllMines = mines.equals(flagged);
 
-      if (revealed.equals(emptyCells) && flaggedAllMines) {
+      if (revealed.equals(emptyCells)) {
          return GameState.Won;
       }
 
@@ -79,7 +78,7 @@ export function useGame({ initSize, initMineCount }: InitBoardParams) {
       }
 
       return GameState.InProgress;
-   }, [mines, flagged, revealed]);
+   }, [mines, revealed]);
 
    const revealCascade = useCallback((...queue: number[]) => {
       let nextRevealed = revealed.slice()

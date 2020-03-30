@@ -1,11 +1,14 @@
 import React from "react";
-import "src/util"
-import { SidePanel } from "src/components/sidepanel/sidepanel";
-import { useGame } from "src/hooks/game"
+import "src/util";
+import { useGame } from "src/hooks/game";
 import { Board } from "./board/board";
 import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 import { lightTheme, darkTheme } from "src/theme";
 import { useLocalStorage } from "src/hooks/localstorage";
+import { Header } from "./sidepanel/header";
+import { Status } from "./sidepanel/status";
+import { Settings } from "./sidepanel/settings/settings";
+import { Info } from "./sidepanel/info";
 
 const GlobalStyle = createGlobalStyle`      
    html, body {
@@ -25,13 +28,31 @@ const StyledApp = styled.div`
    --dark-orange: #fd9f00;
    --light-gray: #3f3d40;
    --dark-gray: #2a2d32;
+
+   height: 100vh;
    
+   overflow: scroll;
    display: grid;
-   grid-template-columns: 360px auto;
+
+   grid-template-rows: 90px 330px 40px 210px 70px;
 
    grid-template-areas:
-      "header main"
-      "aside main";
+      "header"
+      "board"
+      "status"
+      "settings"
+      "info";
+
+   @media screen and (min-width: 768px) {
+      grid-template-columns: 360px auto;
+      grid-template-rows: 100px 80px 230px auto;
+
+      grid-template-areas:
+         "header   board"
+         "status   board"
+         "settings board"
+         "info     board";
+   }
 
    color: ${props => props.theme.colors.text};
    background-color: ${props => props.theme.colors.background};
@@ -109,18 +130,19 @@ export function App() {
    const [useDarkTheme, setDarkTheme] = useLocalStorage('darkTheme', false);
    const toggleDarkTheme = () => setDarkTheme(!useDarkTheme);
 
+   const theme = useDarkTheme ? darkTheme : lightTheme;
+
    return (
-      <ThemeProvider theme={useDarkTheme ? darkTheme : lightTheme}>
-         <GlobalStyle />
+      <ThemeProvider theme={theme}>
+         <GlobalStyle theme={theme} />
          <StyledApp onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
-            <SidePanel
-               gridSize={gridSize}
-               mineCount={mineCount}
-               gameState={getGameState()}
-               minesLeft={mineCount - board.flagged.countBy(Boolean)}
-               onSettingsUpdate={handleSettingsUpdate}
-               onToggleTheme={toggleDarkTheme}
-            />
+            <Header onThemeToggle={toggleDarkTheme} />
+
+            <Status gameState={getGameState()} minesLeft={mineCount - board.flagged.countBy(Boolean)} />
+
+            <Settings gridSize={gridSize} mineCount={mineCount} onSettingsUpdate={handleSettingsUpdate} />
+
+            <Info />
 
             <Board
                gridSize={gridSize}

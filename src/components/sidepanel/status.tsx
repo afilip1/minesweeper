@@ -1,5 +1,13 @@
 import React from "react";
 import { GameState } from "src/hooks/game";
+import styled from "styled-components";
+
+const StyledStatus = styled.h2`
+   grid-area: status;
+
+   padding: 0 30px;
+   margin-top: 10px;
+`;
 
 export type StatusProps = {
    gameState: GameState
@@ -20,5 +28,5 @@ export function Status({ gameState, minesLeft }: StatusProps) {
          break;
    }
 
-   return <h2>{status}</h2>;
+   return <StyledStatus>{status}</StyledStatus>;
 }
