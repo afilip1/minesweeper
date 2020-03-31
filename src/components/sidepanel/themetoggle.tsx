@@ -10,11 +10,7 @@ export const ThemeToggle = styled.div.attrs({
    
    border-radius: ${props => props.height / 2}px;
 
-   background-color: ${({ theme }) =>
-      theme.light
-         ? "var(--light-orange)"
-         : "var(--light-blue)"
-   };
+   background-color: ${({ theme }) => theme.themeToggle};
 
    transition: color 0.3s ease;
    box-shadow: inset 0 3px 3px rgba(0,0,0,0.2);
@@ -27,13 +23,10 @@ export const ThemeToggle = styled.div.attrs({
 
       top: ${props => -props.height / 5}px;
       left: ${props => props.theme.light
-         ? (-props.height / 5)
-         : (props.height - (props.height / 5))}px;
+      ? (-props.height / 5)
+      : (props.height - (props.height / 5))}px;
       
-      background: ${({ theme }) => theme.light
-         ? "url('/img/sun.png')"
-         : "url('/img/moon.png')"
-      };
+      background: ${({ theme }) => theme.themeToggleIcon};
 
       background-size: ${props => props.height * 1.4}px;
 

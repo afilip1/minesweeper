@@ -18,29 +18,26 @@ const StyledCellInner = styled.div<{ dimmed: boolean, revealed: boolean, flagged
 
    box-sizing: border-box;
 
-   @media screen and (min-width: 768px) {
-      font-size: 1.5rem;
-   }
-
-   font-weight: 600;
    color: white;
-
-   background: var(--light-orange);
-   border: 5px solid var(--dark-orange);
+   font-size: 1.15rem;
+   font-weight: 900;
+   
+   background: ${({ theme }) => theme.primary};
+   border: 5px solid ${({ theme }) => theme.primaryDark};
 
    ${props => props.dimmed && `
       filter: brightness(0.8) opacity(0.7) blur(1px) saturate(0.5);
       border: 1px solid darkgray;
    `}
-
-   ${props => props.revealed && `
-      background: var(--light-gray);
-      border: 5px solid var(--dark-gray);
+   
+   ${props => props.flagged && `  
+      background: ${props.theme.secondary};
+      border-color: ${props.theme.secondaryDark};
    `}
 
-   ${props => props.flagged && `  
-      background: var(--light-blue);
-      border: 5px solid var(--dark-blue); 
+   ${props => props.revealed && `
+      background: ${props.theme.tertiary};
+      border-color: ${props.theme.tertiaryDark};
    `}
 `;
 

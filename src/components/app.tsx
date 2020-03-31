@@ -19,23 +19,18 @@ const GlobalStyle = createGlobalStyle`
    ::-moz-focus-inner {
       border: 0;
    }
+
+   * {
+      font-family: 'Montserrat', sans-serif;
+   }
 `;
 
 const StyledApp = styled.div`
-   --light-blue: #06a4ed;
-   --dark-blue: #149dd7;
-   --light-orange: #ffaf2a;
-   --dark-orange: #fd9f00;
-   --light-gray: #3f3d40;
-   --dark-gray: #2a2d32;
-
    height: 100vh;
-   
    overflow: auto;
+   
    display: grid;
-
    grid-template-rows: 90px 330px 40px 210px 70px;
-
    grid-template-areas:
       "header"
       "board"
@@ -46,7 +41,6 @@ const StyledApp = styled.div`
    @media screen and (min-width: 768px) {
       grid-template-columns: 360px auto;
       grid-template-rows: 100px 80px 230px auto;
-
       grid-template-areas:
          "header   board"
          "status   board"
@@ -54,24 +48,20 @@ const StyledApp = styled.div`
          "info     board";
    }
 
-   color: ${props => props.theme.colors.text};
-   background-color: ${props => props.theme.colors.background};
+   color: ${({theme}) => theme.foreground};
+   background-color: ${({theme}) => theme.background};
 
    transition: color 0.3s linear,
                background-color 0.3s linear;
-      
-   * {
-      font-family: 'Montserrat', sans-serif;
-   }
 
    a {
-      color: ${props => props.theme.colors.text};
+      color: ${({theme}) => theme.foreground};
       transition: color 0.3s linear;
    }
    
    input {
-      color: ${props => props.theme.colors.text};
-      background-color: ${props => props.theme.colors.background};
+      color: ${({theme}) => theme.foreground};
+      background-color: ${({theme}) => theme.background};
 
       transition: color 0.3s linear,
                   background-color 0.3s linear;
@@ -135,7 +125,9 @@ export function App() {
    return (
       <ThemeProvider theme={theme}>
          <GlobalStyle theme={theme} />
+
          <StyledApp onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
+
             <Header onThemeToggle={toggleDarkTheme} />
 
             <Status gameState={getGameState()} minesLeft={mineCount - board.flagged.countBy(Boolean)} />
@@ -151,7 +143,9 @@ export function App() {
                onRightClick={handleRightClick}
                onMiddleOver={handleMiddleOver}
             />
+
          </StyledApp>
+
       </ThemeProvider>
    );
 }

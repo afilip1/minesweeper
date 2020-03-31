@@ -10,12 +10,23 @@ const StyledBoard = styled.div`
    overflow: auto;
    padding: 10px 30px;
 
+   overscroll-behavior: none;
+
    @media screen and (min-width: 768px) {
       padding: 30px;
 
-      border-left: 1px solid ${props => props.theme.colors.separator};
+      border-left: 1px solid ${({theme}) => theme.separator};
       transition: border 0.3s linear;
    }
+`;
+
+const BoardGrid = styled.div<{ gridSize: number }>`
+   --cell-size: 40px;
+
+   display: grid;
+   grid-template-columns: repeat(${props => props.gridSize}, var(--cell-size));
+   grid-auto-rows: var(--cell-size);
+   gap: 4px;
 `;
 
 const Shadow = styled.div`
@@ -28,23 +39,10 @@ const Shadow = styled.div`
       display: none;
    }
 
-   box-shadow: inset 0 0 5px ${({theme}) => theme.colors.background};
+   box-shadow: inset 0 0 5px ${({theme}) => theme.background};
    pointer-events: none;
 
    transition: box-shadow 0.3s linear;
-`;
-
-const BoardGrid = styled.div<{ gridSize: number }>`
-   --cell-size: 30px;
-
-   @media screen and (min-width: 768px) {
-      --cell-size: 50px;
-   }
-
-   display: grid;
-   grid-template-columns: repeat(${props => props.gridSize}, var(--cell-size));
-   grid-auto-rows: var(--cell-size);
-   gap: 4px;
 `;
 
 type BoardProps = {

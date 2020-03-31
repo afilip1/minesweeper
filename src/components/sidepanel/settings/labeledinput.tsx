@@ -5,7 +5,7 @@ const StyledInput = styled.input`
    width: 100%;
    font-size: 1.5rem;
    border: none;
-   border-bottom: 3px solid var(--light-blue);
+   border-bottom: 3px solid ${({theme}) => theme.secondary};
    outline: none;
 `;
 

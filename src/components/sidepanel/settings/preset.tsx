@@ -6,7 +6,7 @@ const PresetButton = styled(SubtextButton)`
    padding: 10px;
 
    color: white;
-   background-color: var(--light-blue);
+   background-color: ${({theme}) => theme.secondary};
 `;
 
 type PresetProps = {
