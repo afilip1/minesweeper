@@ -48,20 +48,20 @@ const StyledApp = styled.div`
          "info     board";
    }
 
-   color: ${({theme}) => theme.foreground};
-   background-color: ${({theme}) => theme.background};
+   color: ${({ theme }) => theme.foreground};
+   background-color: ${({ theme }) => theme.background};
 
    transition: color 0.3s linear,
                background-color 0.3s linear;
 
    a {
-      color: ${({theme}) => theme.foreground};
+      color: ${({ theme }) => theme.foreground};
       transition: color 0.3s linear;
    }
    
    input {
-      color: ${({theme}) => theme.foreground};
-      background-color: ${({theme}) => theme.background};
+      color: ${({ theme }) => theme.foreground};
+      background-color: ${({ theme }) => theme.background};
 
       transition: color 0.3s linear,
                   background-color 0.3s linear;
@@ -124,27 +124,29 @@ export function App() {
 
    return (
       <ThemeProvider theme={theme}>
-         <GlobalStyle theme={theme} />
+         <>
+            <GlobalStyle />
 
-         <StyledApp onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
+            <StyledApp onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
 
-            <Header onThemeToggle={toggleDarkTheme} />
+               <Header onThemeToggle={toggleDarkTheme} />
 
-            <Status gameState={getGameState()} minesLeft={mineCount - board.flagged.countBy(Boolean)} />
+               <Status gameState={getGameState()} minesLeft={mineCount - board.flagged.countBy(Boolean)} />
 
-            <Settings gridSize={gridSize} mineCount={mineCount} onSettingsUpdate={handleSettingsUpdate} />
+               <Settings gridSize={gridSize} mineCount={mineCount} onSettingsUpdate={handleSettingsUpdate} />
 
-            <Info />
+               <Info />
 
-            <Board
-               gridSize={gridSize}
-               boardState={board}
-               onLeftClick={handleLeftClick}
-               onRightClick={handleRightClick}
-               onMiddleOver={handleMiddleOver}
-            />
+               <Board
+                  gridSize={gridSize}
+                  boardState={board}
+                  onLeftClick={handleLeftClick}
+                  onRightClick={handleRightClick}
+                  onMiddleOver={handleMiddleOver}
+               />
 
-         </StyledApp>
+            </StyledApp>
+         </>
 
       </ThemeProvider>
    );

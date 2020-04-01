@@ -9,15 +9,11 @@ const StyledBoard = styled.div`
    grid-area: board;
    
    overflow: auto;
-   padding: 10px 30px;
-
    overscroll-behavior: none;
 
    z-index: 1;
 
    @media screen and (min-width: 768px) {
-      padding: 30px;
-
       border-left: 1px solid ${({ theme }) => theme.separator};
       transition: border 0.3s linear;
    }
@@ -25,6 +21,12 @@ const StyledBoard = styled.div`
 
 const BoardGrid = styled.div<{ gridSize: number }>`
    --cell-size: 40px;
+
+   margin: 10px 30px;
+
+   @media screen and (min-width: 768px) {
+      margin: 30px;
+   }
 
    display: grid;
    grid-template-columns: repeat(${props => props.gridSize}, var(--cell-size));
