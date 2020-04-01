@@ -1,12 +1,13 @@
 import React from "react";
-import { BoardState } from "src/hooks/game";
-import { Clickable } from "../common/clickable";
 import styled from "styled-components";
 
-const StyledCellOuter = styled(Clickable)`
-   border: 1px solid white;
+const StyledCellOuter = styled.div`
+   position: relative;
 
    display: flex;
+
+   box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+   border: 1px solid white;
 `;
 
 const StyledCellInner = styled.div<{ dimmed: boolean, revealed: boolean, flagged: boolean }>`
@@ -17,7 +18,7 @@ const StyledCellInner = styled.div<{ dimmed: boolean, revealed: boolean, flagged
    justify-content: center;
 
    box-sizing: border-box;
-
+   
    color: white;
    font-size: 1.15rem;
    font-weight: 900;
@@ -47,30 +48,27 @@ export type CellHandlers = {
    onMiddleOver: (e: React.MouseEvent, i: number) => void
 }
 
-export function renderCell(id: number, board: BoardState, handlers: CellHandlers) {
-   const revealed = board.revealed[id];
-   const dimmed = board.dimmed[id];
-   const flagged = board.flagged[id];
-   const mine = board.mines[id];
-   const adjacentCount = board.adjacent[id] as number;
-   const isLastRevealed = board.lastRevealed === id;
+type CellProps = {
+   dimmed: boolean
+   revealed: boolean
+   flagged: boolean
 
+   onPointerUp: (e: React.PointerEvent) => void
+
+   children: React.ReactNode
+}
+
+export function Cell({ dimmed, revealed, flagged, onPointerUp, children }: CellProps) {
    return (
       <StyledCellOuter
-         key={id}
-         onClick={() => handlers.onLeftClick(id)}
-         onContextMenu={(e) => handlers.onRightClick(e, id)}
-         onMouseDown={(e) => handlers.onMiddleOver(e, id)}
-         onMouseEnter={(e) => handlers.onMiddleOver(e, id)}
+         onPointerUp={onPointerUp}
       >
          <StyledCellInner
             dimmed={dimmed}
             revealed={revealed}
             flagged={flagged}
          >
-            {revealed && (mine
-               ? (isLastRevealed ? "💥" : "💣")
-               : (adjacentCount > 0 && adjacentCount))}
+            {children}
          </StyledCellInner>
       </StyledCellOuter>
    );

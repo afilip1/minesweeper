@@ -22,7 +22,7 @@ export function LabeledNumericInput({ label, value, onChange }: LabeledNumericIn
    return (
       <label>
          {label}
-         <StyledInput type="number" value={value} onChange={onInputChange} />
+         <StyledInput type="text" value={value} onChange={onInputChange} />
       </label>
    );
 }
