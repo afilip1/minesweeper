@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { LabeledNumericInput } from "./labeledinput";
 import styled from "styled-components";
 import { Preset } from "./preset";
+import { useSelector, useDispatch } from "react-redux";
+import { AppState } from "src/store";
 
 const StyledSettings = styled.div`
    grid-area: settings;
@@ -22,27 +24,23 @@ const RestartButton = styled.button`
    width: 100%;
 `;
 
-export type SettingsProps = {
-   gridSize: number
-   mineCount: number
-   onSettingsUpdate: (newGridSize: number, newMineCount: number) => void
-}
+export function Settings() {
+   const [gridSize, setGridSize] = useState(useSelector((state: AppState) => state.gridSize));
+   const [mineCount, setMineCount] = useState(useSelector((state: AppState) => state.mineCount));
 
-export function Settings(props: SettingsProps) {
-   const [gridSize, setGridSize] = useState(props.gridSize);
-   const [mineCount, setMineCount] = useState(props.mineCount);
+   const dispatch = useDispatch();
 
    const handleSelectPreset = (newGridSize: number, newMineCount: number) => {
       setGridSize(newGridSize);
       setMineCount(newMineCount);
 
-      props.onSettingsUpdate(newGridSize, newMineCount);
+      dispatch({ type: "UPDATE_SETTINGS", gridSize: newGridSize, mineCount: newMineCount });
    }
 
    const handleSubmit = (e: React.SyntheticEvent) => {
       e.preventDefault();
 
-      props.onSettingsUpdate(gridSize, mineCount);
+      dispatch({ type: "UPDATE_SETTINGS", gridSize, mineCount });
    }
 
    return (

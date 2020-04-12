@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { BoardState } from "src/hooks/game";
-import { Cell, CellHandlers } from "./cell";
+import { Cell } from "./cell";
 import { range } from "src/util";
 import styled from "styled-components";
 import { ActionPill } from "./actionpill";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "src/store";
+import { revealNeighbors, revealCell, flagCell } from "src/store/actions";
 
 const StyledBoard = styled.div`
    grid-area: board;
@@ -49,15 +51,28 @@ const EdgeShadow = styled.div`
    z-index: 2;
 `;
 
-type BoardProps = {
-   gridSize: number
-   boardState: BoardState
-} & CellHandlers
 
-export function Board({ gridSize, boardState, ...handlers }: BoardProps) {
+export function Board() {
    const [pillCell, setPillCell] = useState<number | null>(null);
    const openPill = (id: number) => setPillCell(id);
    const closePill = () => setPillCell(null);
+
+   const dispatch = useDispatch();
+
+   const boardState = useSelector((state: AppState) => state);
+
+   const handleLeftClick = (i: number) => {
+      if (boardState.revealed[i]) {
+         dispatch(revealNeighbors(i));
+      } else {
+         dispatch(revealCell(i));
+      }
+   }
+
+   const handleRightClick = (e: React.MouseEvent, i: number) => {
+      e.preventDefault();
+      dispatch(flagCell(i));
+   }
 
    const cellIds = range(0, boardState.revealed.length);
    const cells = cellIds.map(id => {
@@ -74,16 +89,16 @@ export function Board({ gridSize, boardState, ...handlers }: BoardProps) {
             case "mouse":
                switch (e.button) {
                   case 0:
-                     handlers.onLeftClick(id);
+                     handleLeftClick(id);
                      break;
                   case 2:
-                     handlers.onRightClick(e, id);
+                     handleRightClick(e, id);
                      break;
                }
                break;
             case "touch":
                if (revealed && e.button === 0) {
-                  handlers.onLeftClick(id);
+                  handleLeftClick(id);
                   closePill();
                } else {
                   isPillOpen ? closePill() : openPill(id);
@@ -104,9 +119,9 @@ export function Board({ gridSize, boardState, ...handlers }: BoardProps) {
 
             {isPillOpen &&
                <ActionPill
-                  above={id > (gridSize - 1)}
-                  onReveal={() => handlers.onLeftClick(id)}
-                  onFlag={(e) => handlers.onRightClick(e, id)} />
+                  above={id > (boardState.gridSize - 1)}
+                  onReveal={() => handleLeftClick(id)}
+                  onFlag={(e) => handleRightClick(e, id)} />
             }
          </Cell>
       );
@@ -116,7 +131,7 @@ export function Board({ gridSize, boardState, ...handlers }: BoardProps) {
       <>
          <StyledBoard>
             <div style={{ display: "inline-block" }}>
-               <BoardGrid gridSize={gridSize}>
+               <BoardGrid gridSize={boardState.gridSize}>
                   {cells}
                </BoardGrid>
             </div>

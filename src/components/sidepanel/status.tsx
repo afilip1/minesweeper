@@ -1,6 +1,7 @@
 import React from "react";
-import { GameState } from "src/hooks/game";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { AppState, GameState } from "src/store";
 
 const StyledStatus = styled.h2`
    grid-area: status;
@@ -14,7 +15,10 @@ export type StatusProps = {
    minesLeft: number
 }
 
-export function Status({ gameState, minesLeft }: StatusProps) {
+export function Status() {
+   const gameState = useSelector((state: AppState) => state.gameState);
+   const minesLeft = useSelector((state: AppState) => state.mineCount - state.flagged.countBy(Boolean));
+
    let status;
    switch (gameState) {
       case GameState.InProgress:

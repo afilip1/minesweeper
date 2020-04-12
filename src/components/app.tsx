@@ -1,6 +1,6 @@
 import React from "react";
 import "src/util";
-import { useGame } from "src/hooks/game";
+
 import { Board } from "./board/board";
 import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 import { lightTheme, darkTheme } from "src/theme";
@@ -69,49 +69,19 @@ const StyledApp = styled.div`
 `;
 
 export function App() {
-   const {
-      gridSize,
-      mineCount,
-      board,
-      resetBoard,
-      tryRevealCell,
-      tryRevealUnflaggedNeighbors,
-      tryFlagCell,
-      highlightCells,
-      unhighlightCells,
-      getGameState,
-   } = useGame({ initSize: 9, initMineCount: 10 });
+   // const handleMouseUp = (e: React.MouseEvent) => {
+   //    if (e.button === 1) {
+   //       unhighlightCells();
+   //    }
+   // }
 
-   const handleSettingsUpdate = (newGridSize: number, newMineCount: number) => {
-      resetBoard(newGridSize, newMineCount);
-   }
+   // const handleMiddleOver = (e: React.MouseEvent, i: number) => {
+   //    if (e.buttons === 4) {
+   //       highlightCells(i);
+   //    }
+   // }
 
-   const handleMouseUp = (e: React.MouseEvent) => {
-      if (e.button === 1) {
-         unhighlightCells();
-      }
-   }
-
-   const handleMiddleOver = (e: React.MouseEvent, i: number) => {
-      if (e.buttons === 4) {
-         highlightCells(i);
-      }
-   }
-
-   const handleRightClick = (e: React.MouseEvent, i: number) => {
-      e.preventDefault();
-      tryFlagCell(i);
-   }
-
-   const handleLeftClick = (i: number) => {
-      if (board.revealed[i]) {
-         tryRevealUnflaggedNeighbors(i);
-      } else {
-         tryRevealCell(i);
-      }
-   }
-
-   const preventScrolling = (e: React.MouseEvent) => {
+   const preventAutoscrolling = (e: React.MouseEvent) => {
       if (e.buttons === 4) {
          e.preventDefault();
       }
@@ -127,27 +97,20 @@ export function App() {
          <>
             <GlobalStyle />
 
-            <StyledApp onContextMenu={(e) => e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={preventScrolling}>
+            <StyledApp onContextMenu={(e) => e.preventDefault()} /* onMouseUp={handleMouseUp} */ onMouseDown={preventAutoscrolling} >
 
                <Header onThemeToggle={toggleDarkTheme} />
 
-               <Status gameState={getGameState()} minesLeft={mineCount - board.flagged.countBy(Boolean)} />
+               <Status />
 
-               <Settings gridSize={gridSize} mineCount={mineCount} onSettingsUpdate={handleSettingsUpdate} />
+               <Settings />
 
                <Info />
 
-               <Board
-                  gridSize={gridSize}
-                  boardState={board}
-                  onLeftClick={handleLeftClick}
-                  onRightClick={handleRightClick}
-                  onMiddleOver={handleMiddleOver}
-               />
+               <Board />
 
             </StyledApp>
          </>
-
       </ThemeProvider>
    );
 }

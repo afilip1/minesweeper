@@ -42,12 +42,6 @@ const StyledCellInner = styled.div<{ dimmed: boolean, revealed: boolean, flagged
    `}
 `;
 
-export type CellHandlers = {
-   onLeftClick: (i: number) => void
-   onRightClick: (e: React.MouseEvent, i: number) => void
-   onMiddleOver: (e: React.MouseEvent, i: number) => void
-}
-
 type CellProps = {
    dimmed: boolean
    revealed: boolean
