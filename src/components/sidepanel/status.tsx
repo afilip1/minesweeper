@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { AppState, GameState } from "src/store";
+import { AppState } from "src/store";
+import { GameState } from "src/game";
 
 const StyledStatus = styled.h2`
    grid-area: status;

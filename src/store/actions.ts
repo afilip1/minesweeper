@@ -1,36 +1,36 @@
 export type RevealCellAction = {
    type: string
-   cellIndex: number
+   cell: number
 }
 
-export function revealCell(cellIndex: number) {
+export function revealCell(cell: number) {
    return {
       type: "REVEAL_CELL",
-      cellIndex
+      cell
    };
 }
 
 export type RevealNeighborsAction = {
    type: string
-   cellIndex: number
+   cell: number
 }
 
-export function revealNeighbors(cellIndex: number) {
+export function revealNeighbors(cell: number) {
    return {
       type: "REVEAL_NEIGHBORS",
-      cellIndex
+      cell
    };
 }
 
 export type FlagCellAction = {
    type: string
-   cellIndex: number
+   cell: number
 }
 
-export function flagCell(cellIndex: number) {
+export function flagCell(cell: number) {
    return {
       type: "FLAG_CELL",
-      cellIndex
+      cell
    };
 }
 
